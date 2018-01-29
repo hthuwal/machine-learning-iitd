@@ -99,3 +99,7 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+/Assignmet_1/Assignment_1_datasets.zip
+
+/Assignmet_1/dataset/
