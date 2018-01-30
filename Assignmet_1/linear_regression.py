@@ -13,11 +13,11 @@ legend = """
 
 
 def plot(x, y, theta):
-    
-    x_line = np.linspace(0,xlim[1],200)
-    x_line.shape = [200,1]
+
+    x_line = np.linspace(0, xlim[1], 200)
+    x_line.shape = [200, 1]
     x_line = np.insert(x_line, 0, 1.0, axis=1)
-    
+
     y_line = np.matmul(theta, np.transpose(x_line))
 
     x = np.delete(x, 0, axis=1)
@@ -28,7 +28,7 @@ def plot(x, y, theta):
     plt.xlim(xlim)
     plt.ylim(ylim)
     plt.scatter(x, y)
-    plt.plot(x_line, y_line,'#FF4500')    
+    plt.plot(x_line, y_line, '#FF4500')
     plt.draw()
 
 
