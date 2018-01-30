@@ -48,7 +48,7 @@ def bgd(x, y, eeta, max_iter, threshold):
             # summation over i { y(i) - h theta x(i))* x(i)(j) }
             error = 0.0
             for ith_example in range(0, num_examples):
-                error += (y[ith_example] - np.matmul(np.transpose(theta), x[ith_example]).flatten()[0]) * x[ith_example][jth_feature]
+                error += (y[ith_example] - theta @ x[ith_example]).flatten()[0] * x[ith_example][jth_feature]
             theta[jth_feature] += eeta * error
 
         if(iter % 100 == 0):
