@@ -32,6 +32,16 @@ def plot(x, y, theta):
     plt.ylim((0.975, 1.01))
     plt.draw()
 
+def mean_squared_error(theta):
+    """
+    Calculate and return the mean squared error
+    """
+    j_theta = 0.5 * np.sum(np.square(Y - theta @ np.transpose(X)))
+    return j_theta
+    # or
+    # z = np.linalg.norm(y - theta @ np.transpose(x))
+    # j_theta = 0.5 * z * z
+
 def bgd(x, y, eeta, max_iter, threshold):
     num_examples = x.shape[0]
     num_features = x.shape[1] - 1
