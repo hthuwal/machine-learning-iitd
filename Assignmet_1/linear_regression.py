@@ -13,18 +13,22 @@ legend = """
 
 
 def plot(x, y, theta):
-    y_line = np.matmul(theta, np.transpose(x))
+    
+    x_line = np.linspace(0,xlim[1],200)
+    x_line.shape = [200,1]
+    x_line = np.insert(x_line, 0, 1.0, axis=1)
+    
+    y_line = np.matmul(theta, np.transpose(x_line))
 
     x = np.delete(x, 0, axis=1)
-    x = list(x.flatten())
-    y = list(y.flatten())
-    y_line = list(y_line.flatten())
-    plt.scatter(x, y)
-    plt.plot(x, y_line)
+    x_line = np.delete(x_line, 0, axis=1)
+
     plt.xlabel("Acidity")
     plt.ylabel("Density")
-    plt.ylim((0.975, 1.01))
-    # plt.ylim((y[np.argmin(y)], y[np.argmax(y)]))
+    plt.xlim(xlim)
+    plt.ylim(ylim)
+    plt.scatter(x, y)
+    plt.plot(x_line, y_line,'#FF4500')    
     plt.draw()
 
 
@@ -101,11 +105,16 @@ def bgd(x, y, eeta, max_iter, threshold, loss_function="change_in_theta"):
 
 X = pd.read_csv("dataset/linearX.csv", header=None)
 X = X.as_matrix()
+temp = X.flatten()
+std = np.std(temp)
+xlim = (temp[np.argmin(temp)]-std, temp[np.argmax(temp)]+std)
 X = np.insert(X, 0, 1.0, axis=1)  # x0 =
 
 
 Y = pd.read_csv("dataset/linearY.csv", header=None)
 Y = Y.as_matrix().flatten()
-
+std = np.std(Y)
+ylim = (Y[np.argmin(Y)]-std, Y[np.argmax(Y)]+std)
+print(xlim, ylim)
 # bgd(X, Y, 0.0001, 50000, 0.0000000001, loss_function="change_in_theta")
 bgd(X, Y, 0.0001, 50000, 0.001, loss_function="gradient")
