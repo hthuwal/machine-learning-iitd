@@ -116,4 +116,6 @@ std = np.std(Y)
 ylim = (Y[np.argmin(Y)]-std, Y[np.argmax(Y)]+std)
 
 # bgd(X, Y, 0.0001, 50000, 0.0000000001, loss_function="change_in_theta")
-bgd(X, Y, 0.0001, 50000, 0.001, loss_function="gradient")
+# bgd(X, Y, 0.0001, 50000, 0.00001, loss_function="gradient")
+bgd(X, Y, 0.0001, 50000, 0.000119480, loss_function="error")
+# bgd(X, Y, 0.0001, 50000, 0.000000000001, loss_function="change_in_error")
