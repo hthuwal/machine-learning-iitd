@@ -57,8 +57,6 @@ def bgd(x, y, eeta, max_iter, threshold, loss_function="change_in_theta"):
     old_theta = np.zeros([num_features+1, ])
     gradient = np.zeros([num_features+1, ])
 
-    plot(x, y, theta)
-
     iter = 0
     while True:
         iter += 1
@@ -73,11 +71,12 @@ def bgd(x, y, eeta, max_iter, threshold, loss_function="change_in_theta"):
             gradient[jth_feature] = gradient_wrt_jth_feature
             theta[jth_feature] += eeta * gradient_wrt_jth_feature
 
-        # if(iter % 100 == 0):
-        #     plt.gcf().clear()
-        #     plot(x, y, theta)
-        #     plt.legend([legend %(iter, eeta, str(theta), loss_function, threshold, loss)])
-        #     plt.pause(0.2)
+        if(iter % 100 == 0):
+            plt.gcf().clear()
+            plot(x, y, theta)
+            plt.legend(
+                [legend % (iter, eeta, str(theta), loss_function, threshold, loss)])
+            plt.pause(0.01)
 
         if loss_function == "change_in_theta":
             loss = change_in_theta(theta, old_theta)
@@ -115,6 +114,6 @@ Y = pd.read_csv("dataset/linearY.csv", header=None)
 Y = Y.as_matrix().flatten()
 std = np.std(Y)
 ylim = (Y[np.argmin(Y)]-std, Y[np.argmax(Y)]+std)
-print(xlim, ylim)
+
 # bgd(X, Y, 0.0001, 50000, 0.0000000001, loss_function="change_in_theta")
 bgd(X, Y, 0.0001, 50000, 0.001, loss_function="gradient")
