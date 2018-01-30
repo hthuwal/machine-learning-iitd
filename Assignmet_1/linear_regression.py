@@ -14,7 +14,7 @@ legend = """
 
 def plot(x, y, theta):
 
-    x_line = np.linspace(0, xlim[1], 200)
+    x_line = np.linspace(xlim[0], xlim[1], 200)
     x_line.shape = [200, 1]
     x_line = np.insert(x_line, 0, 1.0, axis=1)
 
@@ -102,8 +102,15 @@ def bgd(x, y, eeta, max_iter, threshold, loss_function="change_in_theta"):
         [legend % (iter, eeta, str(theta), loss_function, threshold, loss)])
     plt.show()
 
+
+def normalize(x):
+    mean = np.mean(x, axis=0)
+    std = np.std(x)
+    return np.apply_along_axis(lambda x: (x-mean)/std, 1, x)
+
 X = pd.read_csv("dataset/linearX.csv", header=None)
 X = X.as_matrix()
+X = normalize(X)
 temp = X.flatten()
 std = np.std(temp)
 xlim = (temp[np.argmin(temp)]-std, temp[np.argmax(temp)]+std)
@@ -115,7 +122,7 @@ Y = Y.as_matrix().flatten()
 std = np.std(Y)
 ylim = (Y[np.argmin(Y)]-std, Y[np.argmax(Y)]+std)
 
-# bgd(X, Y, 0.0001, 50000, 0.0000000001, loss_function="change_in_theta")
-# bgd(X, Y, 0.0001, 50000, 0.00001, loss_function="gradient")
-bgd(X, Y, 0.0001, 50000, 0.000119480, loss_function="error")
+# bgd(X, Y, 0.01, 50000, 0.0000000001, loss_function="change_in_theta")
+# bgd(X, Y, 0.0001, 50000, 0.0000001, loss_function="gradient")
+# bgd(X, Y, 0.01, 50000, 0.000119480, loss_function="error")
 # bgd(X, Y, 0.0001, 50000, 0.000000000001, loss_function="change_in_error")
