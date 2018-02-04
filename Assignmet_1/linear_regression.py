@@ -100,13 +100,22 @@ def bgd(x, y, eeta, max_iter, threshold, loss_function="change_in_theta"):
 
     plt.legend(
         [legend % (iter, eeta, str(theta), loss_function, threshold, loss)])
-    plt.show()
+    print("GDA solution")
+    print(legend % (iter, eeta, str(theta), loss_function, threshold, loss))
+
+
 
 
 def normalize(x):
     mean = np.mean(x, axis=0)
     std = np.std(x)
     return np.apply_along_axis(lambda x: (x-mean)/std, 1, x)
+
+def analytical_solution(x, y):
+    theta = np.matrix(x.T @ x)
+    theta = theta.I @ x.T @ y
+    theta = np.squeeze(np.asarray(theta))
+    return theta
 
 X = pd.read_csv("dataset/linearX.csv", header=None)
 X = X.as_matrix()
@@ -123,6 +132,9 @@ std = np.std(Y)
 ylim = (Y[np.argmin(Y)]-std, Y[np.argmax(Y)]+std)
 
 # bgd(X, Y, 0.01, 50000, 0.0000000001, loss_function="change_in_theta")
-# bgd(X, Y, 0.0001, 50000, 0.0000001, loss_function="gradient")
+bgd(X, Y, 0.0001, 50000, 0.0000001, loss_function="gradient")
 # bgd(X, Y, 0.01, 50000, 0.000119480, loss_function="error")
-# bgd(X, Y, 0.0001, 50000, 0.000000000001, loss_function="change_in_error")
+# bgd(X, Y, 0.01, 50000, 0.000000000001, loss_function="change_in_error")
+
+print ("Analytical Solution is:", analytical_solution(X,Y))
+plt.show()
