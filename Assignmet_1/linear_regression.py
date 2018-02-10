@@ -87,6 +87,37 @@ def update_error_surface(error, theta, cur_legend):
     error.set_3d_properties(zs)
 
 
+def plot_error_contours():
+    fig = plt.figure(1)
+    ax = fig.add_subplot(gs[1, 1])
+    ax.set_title("Contours of Error Function")
+    cs = ax.contour(theta1, theta0, jtheta, 10)
+    # plt.clabel(cs, inline=1)
+
+    ax.set_xlabel('theta1')
+    ax.set_ylabel('theta0')
+
+    ax.xaxis.set_major_formatter(FormatStrFormatter('%.08f'))
+    ax.yaxis.set_major_formatter(FormatStrFormatter('%.01f'))
+
+    init_theta = np.zeros([X.shape[1], ])
+    init_error = mean_squared_error(init_theta)
+
+    error_cs, = ax.plot([0], [0], marker='o', markersize=3, color="#FF4500")
+    # Add a color bar which maps values to colors.
+    # fig.colorbar(surf, shrink=0.5, aspect=5)
+
+    return error_cs, cs, ax
+
+
+def update_error_contour(theta):
+    plt.figure(1)
+    levels = np.append(cs.levels, mean_squared_error(theta))
+    cs_plot.contour(theta1, theta0, jtheta, np.sort(levels))
+    error_cs.set_xdata(np.append(error_cs.get_xdata(), theta[1]))
+    error_cs.set_ydata(np.append(error_cs.get_ydata(), theta[0]))
+
+
 def mean_squared_error(theta):
     j_theta = 0.5 * np.sum(np.square(Y - theta @ np.transpose(X)))
     return j_theta
@@ -141,6 +172,7 @@ def bgd(x, y, eeta, max_iter, threshold, loss_function="change_in_theta"):
         cur_legend = legend % (iter, eeta, str(theta), loss_function, threshold, loss)
         update_error_surface(error_3d, theta, cur_legend)
         update_hypothesis_plot(hthetax, theta, cur_legend)
+        update_error_contour(theta)
         plt.pause(0.02)
 
         if (loss < threshold or iter == max_iter):
@@ -194,6 +226,8 @@ for i in range(0, len(jtheta)):
 gs = gridspec.GridSpec(2,2)
 hthetax, hplot = hypothesis_plot(X, Y)
 error_3d = plot_error_surface()
+error_cs, cs, cs_plot = plot_error_contours()
+
 mng = plt.get_current_fig_manager()
 # mng.full_screen_toggle()
 mng.resize(*mng.window.maxsize())
