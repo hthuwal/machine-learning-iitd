@@ -1,3 +1,7 @@
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -44,6 +48,26 @@ def update_hypothesis_plot(hypothesis_function, theta, cur_legend):
     y_line = np.matmul(theta, np.transpose(x_line))
     hypothesis_function.set_ydata(y_line)
     plt.legend([cur_legend])
+
+
+def plot_error_surface():
+    fig = plt.figure(2)
+    ax = fig.gca(projection='3d')
+
+    # print(jtheta)
+    surf = ax.plot_surface(theta0, theta1, jtheta, cmap='viridis')
+    ax.set_zlim(-1, 100)
+    ax.set_xlabel('theta0')
+    ax.set_ylabel('theta1')
+    ax.set_zlabel('jtheta')
+    # ax.zaxis.set_major_locator(LinearLocator(10))
+    ax.zaxis.set_major_formatter(FormatStrFormatter('%.08f'))
+    ax.xaxis.set_major_formatter(FormatStrFormatter('%.01f'))
+    ax.yaxis.set_major_formatter(FormatStrFormatter('%.01f'))
+
+    # Add a color bar which maps values to colors.
+    fig.colorbar(surf, shrink=0.5, aspect=5)
+
 
 def mean_squared_error(theta):
     j_theta = 0.5 * np.sum(np.square(Y - theta @ np.transpose(X)))
