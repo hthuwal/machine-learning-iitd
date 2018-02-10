@@ -55,7 +55,7 @@ def update_hypothesis_plot(hypothesis_function, theta, cur_legend):
 def plot_error_surface():
     fig = plt.figure(1)
     ax = fig.add_subplot(gs[1,0], projection='3d')
-    ax.set_title("Error 3D surface")
+    ax.set_title("3D surface of Error Function")
     surf = ax.plot_surface(theta0, theta1, jtheta, cmap='viridis')
     ax.set_zlim(-1, 100)
     ax.set_xlabel('theta0')
