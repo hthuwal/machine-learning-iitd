@@ -3,6 +3,7 @@ from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 import numpy as np
 import pandas as pd
 
@@ -18,8 +19,8 @@ legend = """
 
 def hypothesis_plot(x, y):
     fig = plt.figure(1)
-    plt.subplot(1,2,1)
-    plt.title('Hypothesis Function and Scatter Plot')
+    ax = plt.subplot(gs[0, :])
+    ax.set_title('Hypothesis Function and Scatter Plot')
 
     x_line = np.linspace(xlim[0], xlim[1], 200)
     x_line.shape = [200, 1]
@@ -38,7 +39,7 @@ def hypothesis_plot(x, y):
     plt.scatter(x, y)
     hypothesis_function, = plt.plot(x_line, y_line, '#FF4500')
 
-    return hypothesis_function
+    return hypothesis_function, ax
 
 
 def update_hypothesis_plot(hypothesis_function, theta, cur_legend):
@@ -48,13 +49,13 @@ def update_hypothesis_plot(hypothesis_function, theta, cur_legend):
     x_line = np.insert(x_line, 0, 1.0, axis=1)
     y_line = np.matmul(theta, np.transpose(x_line))
     hypothesis_function.set_ydata(y_line)
-    plt.legend([cur_legend])
+    hplot.legend([cur_legend])
 
 
 def plot_error_surface():
     fig = plt.figure(1)
-    ax = fig.add_subplot(1, 2, 2, projection='3d')
-
+    ax = fig.add_subplot(gs[1,0], projection='3d')
+    ax.set_title("Error 3D surface")
     surf = ax.plot_surface(theta0, theta1, jtheta, cmap='viridis')
     ax.set_zlim(-1, 100)
     ax.set_xlabel('theta0')
@@ -84,7 +85,6 @@ def update_error_surface(error, theta, cur_legend):
     error.set_xdata(xs)
     error.set_ydata(ys)
     error.set_3d_properties(zs)
-    plt.legend([cur_legend])
 
 
 def mean_squared_error(theta):
@@ -139,8 +139,8 @@ def bgd(x, y, eeta, max_iter, threshold, loss_function="change_in_theta"):
         print(iter, theta, loss)
 
         cur_legend = legend % (iter, eeta, str(theta), loss_function, threshold, loss)
-        update_hypothesis_plot(hthetax, theta, cur_legend)
         update_error_surface(error_3d, theta, cur_legend)
+        update_hypothesis_plot(hthetax, theta, cur_legend)
         plt.pause(0.02)
 
         if (loss < threshold or iter == max_iter):
@@ -191,7 +191,8 @@ for i in range(0, len(jtheta)):
         jtheta[i][j] = mean_squared_error(
             np.array([theta0[i][j], theta1[i][j]]))
 
-hthetax = hypothesis_plot(X, Y)
+gs = gridspec.GridSpec(2,2)
+hthetax, hplot = hypothesis_plot(X, Y)
 error_3d = plot_error_surface()
 
 # bgd(X, Y, 0.01, 50000, 0.0000000001, loss_function="change_in_theta")
