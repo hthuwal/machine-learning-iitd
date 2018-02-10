@@ -54,19 +54,36 @@ def plot_error_surface():
     fig = plt.figure(2)
     ax = fig.gca(projection='3d')
 
-    # print(jtheta)
     surf = ax.plot_surface(theta0, theta1, jtheta, cmap='viridis')
     ax.set_zlim(-1, 100)
     ax.set_xlabel('theta0')
     ax.set_ylabel('theta1')
     ax.set_zlabel('jtheta')
-    # ax.zaxis.set_major_locator(LinearLocator(10))
-    ax.zaxis.set_major_formatter(FormatStrFormatter('%.08f'))
-    ax.xaxis.set_major_formatter(FormatStrFormatter('%.01f'))
-    ax.yaxis.set_major_formatter(FormatStrFormatter('%.01f'))
 
+    ax.zaxis.set_major_formatter(FormatStrFormatter('%.01f'))
+    ax.xaxis.set_major_formatter(FormatStrFormatter('%.01f'))
+    ax.yaxis.set_major_formatter(FormatStrFormatter('%.08f'))
+
+    init_theta = np.zeros([X.shape[1], ])
+    init_error = mean_squared_error(init_theta)
+
+    error_3d, = ax.plot([0], [0], [init_error], marker='o', markersize=3, color="#FF4500")
     # Add a color bar which maps values to colors.
     fig.colorbar(surf, shrink=0.5, aspect=5)
+
+    return error_3d
+
+
+def update_error_surface(error, theta, cur_legend):
+    plt.figure(2)
+    xs, ys, zs = error._verts3d
+    xs = np.append(xs, theta[0])
+    ys = np.append(ys, theta[1])
+    zs = np.append(zs, mean_squared_error(theta))
+    error.set_xdata(xs)
+    error.set_ydata(ys)
+    error.set_3d_properties(zs)
+    plt.legend([cur_legend])
 
 
 def mean_squared_error(theta):
@@ -122,6 +139,7 @@ def bgd(x, y, eeta, max_iter, threshold, loss_function="change_in_theta"):
 
         cur_legend = legend % (iter, eeta, str(theta), loss_function, threshold, loss)
         update_hypothesis_plot(hthetax, theta, cur_legend)
+        update_error_surface(error_3d, theta, cur_legend)
         plt.pause(0.02)
 
         if (loss < threshold or iter == max_iter):
@@ -173,10 +191,12 @@ for i in range(0, len(jtheta)):
             np.array([theta0[i][j], theta1[i][j]]))
 
 hthetax = hypothesis_plot(X, Y)
+error_3d = plot_error_surface()
+
 # bgd(X, Y, 0.01, 50000, 0.0000000001, loss_function="change_in_theta")
 bgd(X, Y, 0.001, 50000, 0.0000001, loss_function="gradient")
 # bgd(X, Y, 0.01, 50000, 0.000119480, loss_function="error")
 # bgd(X, Y, 0.01, 50000, 0.000000000001, loss_function="change_in_error")
 
-print ("Analytical Solution is:", analytical_solution(X,Y))
+print("Analytical Solution is:", analytical_solution(X, Y))
 plt.show()
