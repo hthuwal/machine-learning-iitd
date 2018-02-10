@@ -42,13 +42,13 @@ def hypothesis_plot(x, y):
     return hypothesis_function, ax
 
 
-def update_hypothesis_plot(hypothesis_function, theta, cur_legend):
+def update_hypothesis_plot(theta, cur_legend):
     plt.figure(1)
     x_line = np.linspace(xlim[0], xlim[1], 200)
     x_line.shape = [200, 1]
     x_line = np.insert(x_line, 0, 1.0, axis=1)
     y_line = np.matmul(theta, np.transpose(x_line))
-    hypothesis_function.set_ydata(y_line)
+    hthetax.set_ydata(y_line)
     hplot.legend([cur_legend])
 
 
@@ -76,15 +76,15 @@ def plot_error_surface():
     return error_3d
 
 
-def update_error_surface(error, theta, cur_legend):
+def update_error_surface(theta):
     plt.figure(1)
-    xs, ys, zs = error._verts3d
+    xs, ys, zs = error_3d._verts3d
     xs = np.append(xs, theta[0])
     ys = np.append(ys, theta[1])
     zs = np.append(zs, mean_squared_error(theta))
-    error.set_xdata(xs)
-    error.set_ydata(ys)
-    error.set_3d_properties(zs)
+    error_3d.set_xdata(xs)
+    error_3d.set_ydata(ys)
+    error_3d.set_3d_properties(zs)
 
 
 def plot_error_contours():
@@ -170,9 +170,9 @@ def bgd(x, y, eeta, max_iter, threshold, loss_function="change_in_theta"):
         print(iter, theta, loss)
 
         cur_legend = legend % (iter, eeta, str(theta), loss_function, threshold, loss)
-        update_error_surface(error_3d, theta, cur_legend)
-        update_hypothesis_plot(hthetax, theta, cur_legend)
+        update_error_surface(theta)
         update_error_contour(theta)
+        update_hypothesis_plot(theta, cur_legend)
         plt.pause(0.02)
 
         if (loss < threshold or iter == max_iter):
