@@ -136,7 +136,8 @@ def bgd(x, y, eeta, max_iter, threshold, loss_function="change_in_theta"):
 def normalize(x):
     mean = np.mean(x, axis=0)
     std = np.std(x)
-    return np.apply_along_axis(lambda x: (x-mean)/std, 1, x)
+    return np.apply_along_axis(lambda x: (x - mean) / std, 1, x)
+
 
 def analytical_solution(x, y):
     theta = np.matrix(x.T @ x)
@@ -144,19 +145,20 @@ def analytical_solution(x, y):
     theta = np.squeeze(np.asarray(theta))
     return theta
 
+
 X = pd.read_csv("dataset/linearX.csv", header=None)
 X = X.as_matrix()
 X = normalize(X)
 temp = X.flatten()
 std = np.std(temp)
-xlim = (temp[np.argmin(temp)]-std, temp[np.argmax(temp)]+std)
+xlim = (temp[np.argmin(temp)] - std, temp[np.argmax(temp)] + std)
 X = np.insert(X, 0, 1.0, axis=1)  # x0 =
 
 
 Y = pd.read_csv("dataset/linearY.csv", header=None)
 Y = Y.as_matrix().flatten()
 std = np.std(Y)
-ylim = (Y[np.argmin(Y)]-std, Y[np.argmax(Y)]+std)
+ylim = (Y[np.argmin(Y)] - std, Y[np.argmax(Y)] + std)
 
 
 theta0 = np.arange(-1, 2, 0.01)
@@ -167,11 +169,12 @@ jtheta = np.zeros(theta0.shape)
 # TODO do this using some numpy trick
 for i in range(0, len(jtheta)):
     for j in range(0, len(jtheta[0])):
-        jtheta[i][j] = mean_squared_error(np.array([ theta0[i][j], theta1[i][j] ]))
+        jtheta[i][j] = mean_squared_error(
+            np.array([theta0[i][j], theta1[i][j]]))
 
 hthetax = hypothesis_plot(X, Y)
 # bgd(X, Y, 0.01, 50000, 0.0000000001, loss_function="change_in_theta")
-bgd(X, Y, 0.0001, 50000, 0.0000001, loss_function="gradient")
+bgd(X, Y, 0.001, 50000, 0.0000001, loss_function="gradient")
 # bgd(X, Y, 0.01, 50000, 0.000119480, loss_function="error")
 # bgd(X, Y, 0.01, 50000, 0.000000000001, loss_function="change_in_error")
 
