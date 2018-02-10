@@ -131,6 +131,17 @@ Y = Y.as_matrix().flatten()
 std = np.std(Y)
 ylim = (Y[np.argmin(Y)]-std, Y[np.argmax(Y)]+std)
 
+
+theta0 = np.arange(-1, 2, 0.01)
+theta1 = np.arange(0, 0.0026, 0.0001)
+theta0, theta1 = np.meshgrid(theta0, theta1)
+jtheta = np.zeros(theta0.shape)
+
+# TODO do this using some numpy trick
+for i in range(0, len(jtheta)):
+    for j in range(0, len(jtheta[0])):
+        jtheta[i][j] = mean_squared_error(np.array([ theta0[i][j], theta1[i][j] ]))
+
 # bgd(X, Y, 0.01, 50000, 0.0000000001, loss_function="change_in_theta")
 bgd(X, Y, 0.0001, 50000, 0.0000001, loss_function="gradient")
 # bgd(X, Y, 0.01, 50000, 0.000119480, loss_function="error")
