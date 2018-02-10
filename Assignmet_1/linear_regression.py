@@ -194,6 +194,9 @@ for i in range(0, len(jtheta)):
 gs = gridspec.GridSpec(2,2)
 hthetax, hplot = hypothesis_plot(X, Y)
 error_3d = plot_error_surface()
+mng = plt.get_current_fig_manager()
+# mng.full_screen_toggle()
+mng.resize(*mng.window.maxsize())
 
 # bgd(X, Y, 0.01, 50000, 0.0000000001, loss_function="change_in_theta")
 bgd(X, Y, 0.001, 50000, 0.0000001, loss_function="gradient")
