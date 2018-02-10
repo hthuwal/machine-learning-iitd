@@ -17,7 +17,8 @@ legend = """
 
 
 def hypothesis_plot(x, y):
-    plt.figure(1)
+    fig = plt.figure(1)
+    plt.subplot(1,2,1)
     plt.title('Hypothesis Function and Scatter Plot')
 
     x_line = np.linspace(xlim[0], xlim[1], 200)
@@ -51,8 +52,8 @@ def update_hypothesis_plot(hypothesis_function, theta, cur_legend):
 
 
 def plot_error_surface():
-    fig = plt.figure(2)
-    ax = fig.gca(projection='3d')
+    fig = plt.figure(1)
+    ax = fig.add_subplot(1, 2, 2, projection='3d')
 
     surf = ax.plot_surface(theta0, theta1, jtheta, cmap='viridis')
     ax.set_zlim(-1, 100)
@@ -75,7 +76,7 @@ def plot_error_surface():
 
 
 def update_error_surface(error, theta, cur_legend):
-    plt.figure(2)
+    plt.figure(1)
     xs, ys, zs = error._verts3d
     xs = np.append(xs, theta[0])
     ys = np.append(ys, theta[1])
