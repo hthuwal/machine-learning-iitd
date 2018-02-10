@@ -207,7 +207,7 @@ X = normalize(X)
 temp = X.flatten()
 std = np.std(temp)
 xlim = (temp[np.argmin(temp)] - std, temp[np.argmax(temp)] + std)
-X = np.insert(X, 0, 1.0, axis=1)  # x0 =
+X = np.insert(X, 0, 1.0, axis=1)
 
 
 Y = pd.read_csv("dataset/linearY.csv", header=None)
