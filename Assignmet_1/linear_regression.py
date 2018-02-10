@@ -96,8 +96,7 @@ def bgd(x, y, eeta, max_iter, threshold, loss_function="change_in_theta"):
 
         print(iter, theta, loss)
 
-        cur_legend = legend % (iter, eeta, str(
-            theta), loss_function, threshold, loss)
+        cur_legend = legend % (iter, eeta, str(theta), loss_function, threshold, loss)
         update_hypothesis_plot(hthetax, theta, cur_legend)
         plt.pause(0.02)
 
@@ -106,14 +105,8 @@ def bgd(x, y, eeta, max_iter, threshold, loss_function="change_in_theta"):
 
         old_theta = np.array(theta)
 
-    # plt.gcf().clear()
-    # cur_legend = legend % (iter, eeta, str(theta), loss_function, threshold, loss)
-    # plot(x, y, theta, cur_legend)
-
-    # plt.legend(
-    #     [legend % (iter, eeta, str(theta), loss_function, threshold, loss)])
-    # print("GDA solution")
-    # print(legend % (iter, eeta, str(theta), loss_function, threshold, loss))
+    print("GDA solution")
+    print(legend % (iter, eeta, str(theta), loss_function, threshold, loss))
 
 
 def normalize(x):
