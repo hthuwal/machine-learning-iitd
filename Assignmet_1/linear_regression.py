@@ -135,6 +135,12 @@ def change_in_error(theta, old_theta):
     return abs(mean_squared_error(theta) - mean_squared_error(old_theta))
 
 
+def update_plots(theta, cur_legend):
+    update_error_surface(theta)
+    update_error_contour(theta)
+    update_hypothesis_plot(theta, cur_legend)
+
+
 def bgd(x, y, eeta, max_iter, threshold, loss_function="change_in_theta"):
     num_examples = x.shape[0]
     num_features = x.shape[1] - 1
@@ -170,9 +176,7 @@ def bgd(x, y, eeta, max_iter, threshold, loss_function="change_in_theta"):
         print(iter, theta, loss)
 
         cur_legend = legend % (iter, eeta, str(theta), loss_function, threshold, loss)
-        update_error_surface(theta)
-        update_error_contour(theta)
-        update_hypothesis_plot(theta, cur_legend)
+        update_plots(theta, cur_legend)
         plt.pause(0.02)
 
         if (loss < threshold or iter == max_iter):
