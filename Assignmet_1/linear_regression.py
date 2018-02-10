@@ -18,7 +18,6 @@ legend = """
 
 
 def hypothesis_plot(x, y):
-    fig = plt.figure(1)
     ax = plt.subplot(gs[0, :])
     ax.set_title('Hypothesis Function and Scatter Plot')
 
@@ -43,7 +42,6 @@ def hypothesis_plot(x, y):
 
 
 def update_hypothesis_plot(theta, cur_legend):
-    plt.figure(1)
     x_line = np.linspace(xlim[0], xlim[1], 200)
     x_line.shape = [200, 1]
     x_line = np.insert(x_line, 0, 1.0, axis=1)
@@ -53,7 +51,6 @@ def update_hypothesis_plot(theta, cur_legend):
 
 
 def plot_error_surface():
-    fig = plt.figure(1)
     ax = fig.add_subplot(gs[1, 0], projection='3d')
     ax.set_title("3D surface of Error Function")
     surf = ax.plot_surface(theta0, theta1, jtheta, cmap='viridis')
@@ -77,7 +74,6 @@ def plot_error_surface():
 
 
 def update_error_surface(theta):
-    plt.figure(1)
     xs, ys, zs = error_3d._verts3d
     xs = np.append(xs, theta[0])
     ys = np.append(ys, theta[1])
@@ -88,7 +84,6 @@ def update_error_surface(theta):
 
 
 def plot_error_contours():
-    fig = plt.figure(1)
     ax = fig.add_subplot(gs[1, 1])
     ax.set_title("Contours of Error Function")
     cs = ax.contour(theta1, theta0, jtheta, 10)
@@ -111,7 +106,6 @@ def plot_error_contours():
 
 
 def update_error_contour(theta):
-    plt.figure(1)
     levels = np.append(cs.levels, mean_squared_error(theta))
     cs_plot.contour(theta1, theta0, jtheta, np.sort(levels))
     error_cs.set_xdata(np.append(error_cs.get_xdata(), theta[1]))
@@ -178,7 +172,7 @@ def bgd(x, y, eeta, max_iter, threshold, loss_function="change_in_theta"):
         cur_legend = legend % (iter, eeta, str(theta), loss_function, threshold, loss)
         update_plots(theta, cur_legend)
         plt.pause(0.02)
-
+        plt.savefig("bgd/%d.png" %iter)
         if (loss < threshold or iter == max_iter):
             break
 
@@ -228,6 +222,8 @@ for i in range(0, len(jtheta)):
             np.array([theta0[i][j], theta1[i][j]]))
 
 gs = gridspec.GridSpec(2, 2)
+# fig = plt.figure(figsize=(1920/96, 1080/96), dpi=96) # forcing it to be of size 1920x1080
+fig = plt.figure()
 hthetax, hplot = hypothesis_plot(X, Y)
 error_3d = plot_error_surface()
 error_cs, cs, cs_plot = plot_error_contours()
