@@ -12,12 +12,14 @@ legend = """
     """
 
 
-def plot(x, y, theta):
+def hypothesis_plot(x, y):
+    plt.figure(1)
+    plt.title('Hypothesis Function and Scatter Plot')
 
     x_line = np.linspace(xlim[0], xlim[1], 200)
     x_line.shape = [200, 1]
     x_line = np.insert(x_line, 0, 1.0, axis=1)
-
+    theta = np.zeros([x.shape[1], ])
     y_line = np.matmul(theta, np.transpose(x_line))
 
     x = np.delete(x, 0, axis=1)
@@ -27,10 +29,21 @@ def plot(x, y, theta):
     plt.ylabel("Density")
     plt.xlim(xlim)
     plt.ylim(ylim)
-    plt.scatter(x, y)
-    plt.plot(x_line, y_line, '#FF4500')
-    plt.draw()
 
+    plt.scatter(x, y)
+    hypothesis_function, = plt.plot(x_line, y_line, '#FF4500')
+
+    return hypothesis_function
+
+
+def update_hypothesis_plot(hypothesis_function, theta, cur_legend):
+    plt.figure(1)
+    x_line = np.linspace(xlim[0], xlim[1], 200)
+    x_line.shape = [200, 1]
+    x_line = np.insert(x_line, 0, 1.0, axis=1)
+    y_line = np.matmul(theta, np.transpose(x_line))
+    hypothesis_function.set_ydata(y_line)
+    plt.legend([cur_legend])
 
 def mean_squared_error(theta):
     j_theta = 0.5 * np.sum(np.square(Y - theta @ np.transpose(X)))
@@ -53,9 +66,9 @@ def bgd(x, y, eeta, max_iter, threshold, loss_function="change_in_theta"):
     num_examples = x.shape[0]
     num_features = x.shape[1] - 1
 
-    theta = np.zeros([num_features+1, ])
-    old_theta = np.zeros([num_features+1, ])
-    gradient = np.zeros([num_features+1, ])
+    theta = np.zeros([num_features + 1, ])
+    old_theta = np.zeros([num_features + 1, ])
+    gradient = np.zeros([num_features + 1, ])
 
     iter = 0
     while True:
@@ -71,13 +84,6 @@ def bgd(x, y, eeta, max_iter, threshold, loss_function="change_in_theta"):
             gradient[jth_feature] = gradient_wrt_jth_feature
             theta[jth_feature] += eeta * gradient_wrt_jth_feature
 
-        if(iter % 100 == 0):
-            plt.gcf().clear()
-            plot(x, y, theta)
-            plt.legend(
-                [legend % (iter, eeta, str(theta), loss_function, threshold, loss)])
-            plt.pause(0.01)
-
         if loss_function == "change_in_theta":
             loss = change_in_theta(theta, old_theta)
         elif loss_function == "change_in_error":
@@ -90,20 +96,24 @@ def bgd(x, y, eeta, max_iter, threshold, loss_function="change_in_theta"):
 
         print(iter, theta, loss)
 
+        cur_legend = legend % (iter, eeta, str(
+            theta), loss_function, threshold, loss)
+        update_hypothesis_plot(hthetax, theta, cur_legend)
+        plt.pause(0.02)
+
         if (loss < threshold or iter == max_iter):
             break
 
         old_theta = np.array(theta)
 
-    plt.gcf().clear()
-    plot(x, y, theta)
+    # plt.gcf().clear()
+    # cur_legend = legend % (iter, eeta, str(theta), loss_function, threshold, loss)
+    # plot(x, y, theta, cur_legend)
 
-    plt.legend(
-        [legend % (iter, eeta, str(theta), loss_function, threshold, loss)])
-    print("GDA solution")
-    print(legend % (iter, eeta, str(theta), loss_function, threshold, loss))
-
-
+    # plt.legend(
+    #     [legend % (iter, eeta, str(theta), loss_function, threshold, loss)])
+    # print("GDA solution")
+    # print(legend % (iter, eeta, str(theta), loss_function, threshold, loss))
 
 
 def normalize(x):
