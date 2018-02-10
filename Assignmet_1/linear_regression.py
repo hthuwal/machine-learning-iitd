@@ -172,7 +172,7 @@ def bgd(x, y, eeta, max_iter, threshold, loss_function="change_in_theta"):
         cur_legend = legend % (iter, eeta, str(theta), loss_function, threshold, loss)
         update_plots(theta, cur_legend)
         plt.pause(0.02)
-        plt.savefig("bgd/%d.png" %iter)
+        # plt.savefig("bgd/%d.png" %iter)
         if (loss < threshold or iter == max_iter):
             break
 
