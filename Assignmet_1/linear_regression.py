@@ -169,6 +169,7 @@ for i in range(0, len(jtheta)):
     for j in range(0, len(jtheta[0])):
         jtheta[i][j] = mean_squared_error(np.array([ theta0[i][j], theta1[i][j] ]))
 
+hthetax = hypothesis_plot(X, Y)
 # bgd(X, Y, 0.01, 50000, 0.0000000001, loss_function="change_in_theta")
 bgd(X, Y, 0.0001, 50000, 0.0000001, loss_function="gradient")
 # bgd(X, Y, 0.01, 50000, 0.000119480, loss_function="error")
