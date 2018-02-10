@@ -54,7 +54,7 @@ def update_hypothesis_plot(hypothesis_function, theta, cur_legend):
 
 def plot_error_surface():
     fig = plt.figure(1)
-    ax = fig.add_subplot(gs[1,0], projection='3d')
+    ax = fig.add_subplot(gs[1, 0], projection='3d')
     ax.set_title("3D surface of Error Function")
     surf = ax.plot_surface(theta0, theta1, jtheta, cmap='viridis')
     ax.set_zlim(-1, 100)
@@ -223,7 +223,7 @@ for i in range(0, len(jtheta)):
         jtheta[i][j] = mean_squared_error(
             np.array([theta0[i][j], theta1[i][j]]))
 
-gs = gridspec.GridSpec(2,2)
+gs = gridspec.GridSpec(2, 2)
 hthetax, hplot = hypothesis_plot(X, Y)
 error_3d = plot_error_surface()
 error_cs, cs, cs_plot = plot_error_contours()
