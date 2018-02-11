@@ -83,12 +83,16 @@ def hypothesis_plot_wlr(x, y, tau):
 X, Y, xlim, ylim = my_utils.read_files("weightedX.csv", "weightedY.csv")
 theta_ulr_normal = ulr_normal(X, Y)
 
-fig = plt.figure(figsize=(1920/96, 1080/96), dpi=96) # forcing it to be of size 1920x1080
+# fig = plt.figure(figsize=(1920 / 96, 1080 / 96), dpi=96)  # forcing it to be of size 1920x1080
+fig=plt.figure()
+
+mng = plt.get_current_fig_manager()
+# mng.full_screen_toggle()
+mng.resize(*mng.window.maxsize())
 
 hypothesis_plot_ulr(X, Y, theta_ulr_normal)
-tau = 0.8
-hypothesis_plot_wlr(X, Y, 0.1)
+tau = 10
+hypothesis_plot_wlr(X, Y, tau)
 
-# plt.pause(2)
-plt.savefig("wlr/"+"theta_0.1.png")
+# plt.savefig("wlr/" + "tau_%0.2f.png" % tau)
 plt.show()
