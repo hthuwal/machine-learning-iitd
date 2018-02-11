@@ -41,6 +41,30 @@ def hessian_ltheta(x, y, theta):
 
     return np.matrix(hessian)
 
+
+def newtons_method(x, y, max_iter, threshold):
+    num_examples = x.shape[0]
+    num_features = x.shape[1] - 1
+
+    theta = np.zeros([num_features + 1, ])
+
+    iter = 0
+
+    while True:
+        gradient = gradient_ltheta(x, y, theta)
+
+        temp = np.abs(gradient)
+        loss = temp[np.argmax(gradient)]
+
+        print(iter, theta, loss)
+
+        if (loss < threshold or iter == max_iter):
+            break
+
+        theta = theta - hessian_ltheta(x, y, theta).I @ gradient  # update
+        iter += 1
+
+
 data = my_utils.read_files("logisticX.csv", "logisticY.csv")
 X = data[0]
 Y = data[1]
@@ -51,5 +75,6 @@ argmin = np.argmin(X, axis=0)
 x1_lim = (X[argmin[1]][1] - std[1], X[argmax[1]][1] + std[1])
 x2_lim = (X[argmin[2]][2] - std[2], X[argmax[2]][2] + std[2])
 
-print(gradient_ltheta(X, Y, np.array([1, 2, 3])))
-print(hessian_ltheta(X, Y, np.array([1, 2, 3])))
+# print(gradient_ltheta(X, Y, np.array([1, 2, 3])))
+# print(hessian_ltheta(X, Y, np.array([1, 2, 3])))
+newtons_method(X, Y, 500, 1.0e-15)
