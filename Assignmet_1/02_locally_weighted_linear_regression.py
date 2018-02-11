@@ -77,7 +77,7 @@ def hypothesis_plot_wlr(x, y, tau):
 
     plt.scatter(x, y)  # original points
     plt.scatter(x_wlr, y_wlr, s=3)  # curve resultant of
-    plt.legend(["tau: %0.2f" % tau])
+    plt.legend(["tau: %0.4f" % tau])
 
 def fun(x, y):
     taus = 1 / np.linspace(0, 10, 50)
