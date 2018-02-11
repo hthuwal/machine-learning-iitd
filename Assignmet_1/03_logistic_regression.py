@@ -39,7 +39,7 @@ def hessian_ltheta(x, y, theta):
                 gz = g(theta @ x[kth_example])
                 hessian[ith_feature][jth_feature] += x[kth_example][ith_feature] * x[kth_example][jth_feature] * (gz - 1) * (gz)
 
-    return hessian
+    return np.matrix(hessian)
 
 data = my_utils.read_files("logisticX.csv", "logisticY.csv")
 X = data[0]
