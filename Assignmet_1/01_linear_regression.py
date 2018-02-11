@@ -86,11 +86,11 @@ def update_error_surface(theta):
 def plot_error_contours():
     ax = fig.add_subplot(gs[1, 1])
     ax.set_title("Contours of Error Function")
-    cs = ax.contour(theta1, theta0, jtheta, 10)
+    cs = ax.contour(theta0, theta1, jtheta, 10)
     # plt.clabel(cs, inline=1)
 
-    ax.set_xlabel('theta1')
-    ax.set_ylabel('theta0')
+    ax.set_xlabel('theta0')
+    ax.set_ylabel('theta1')
 
     ax.xaxis.set_major_formatter(FormatStrFormatter('%.08f'))
     ax.yaxis.set_major_formatter(FormatStrFormatter('%.01f'))
@@ -107,9 +107,9 @@ def plot_error_contours():
 
 def update_error_contour(theta):
     levels = np.append(cs.levels, mean_squared_error(theta))
-    cs_plot.contour(theta1, theta0, jtheta, np.sort(levels))
-    error_cs.set_xdata(np.append(error_cs.get_xdata(), theta[1]))
-    error_cs.set_ydata(np.append(error_cs.get_ydata(), theta[0]))
+    cs_plot.contour(theta0, theta1, jtheta, np.sort(levels))
+    error_cs.set_xdata(np.append(error_cs.get_xdata(), theta[0]))
+    error_cs.set_ydata(np.append(error_cs.get_ydata(), theta[1]))
 
 
 def mean_squared_error(theta):
@@ -173,6 +173,7 @@ def bgd(x, y, eeta, max_iter, threshold, loss_function="change_in_theta"):
         update_plots(theta, cur_legend)
         plt.pause(0.02)
         # plt.savefig("bgd/%d.png" %iter)
+        # TODO this should be before updation
         if (loss < threshold or iter == max_iter):
             break
 
