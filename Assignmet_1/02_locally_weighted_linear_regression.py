@@ -54,15 +54,36 @@ def wlr_normal(x, y, cur_x, tau):
     theta = np.squeeze(np.asarray(theta))
     return theta
 
+
 def get_y(x, theta):
     x = np.array([1, x])
     return theta.T @ x
 
 
+def hypothesis_plot_wlr(x, y, tau):
+    ax = plt.subplot(1, 2, 2)
+    ax.set_title('Analytical Solution: Weighted Linear Regression')
+
+    x_wlr = np.linspace(xlim[0], xlim[1], 200)
+    x_wlr.shape = [200, 1]
+    y_wlr = np.array([get_y(cur_x, wlr_normal(x, y, cur_x, tau)) for cur_x in x_wlr])
+
+    x = np.delete(x, 0, axis=1)
+
+    plt.xlabel("X")
+    plt.ylabel("Y")
+    plt.xlim(xlim)
+    plt.ylim(ylim)
+
+    plt.scatter(x, y)  # original points
+    plt.scatter(x_wlr, y_wlr, s=3)  # curve resultant of
+    plt.legend(["tau: %0.2f" % tau])
+
+
 X, Y, xlim, ylim = my_utils.read_files("weightedX.csv", "weightedY.csv")
 theta_ulr_normal = ulr_normal(X, Y)
 
-print(wlr_normal(X, Y, 4, 0.8))
 hypothesis_plot_ulr(X, Y, theta_ulr_normal)
-
+tau = 0.8
+hypothesis_plot_wlr(X, Y, 100.0)
 plt.show()
