@@ -232,8 +232,8 @@ mng = plt.get_current_fig_manager()
 # mng.full_screen_toggle()
 mng.resize(*mng.window.maxsize())
 
-# bgd(X, Y, 0.01, 50000, 0.0000000001, loss_function="change_in_theta")
-bgd(X, Y, 0.001, 50000, 0.0000001, loss_function="gradient")
+bgd(X, Y, 0.021, 100, 0.0000000001, loss_function="change_in_theta")
+# bgd(X, Y, 0.001, 100, 0.0000001, loss_function="gradient")
 # bgd(X, Y, 0.01, 50000, 0.000119480, loss_function="error")
 # bgd(X, Y, 0.01, 50000, 0.000000000001, loss_function="change_in_error")
 
