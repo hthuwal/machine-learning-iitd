@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 import my_utils
 
 
-def hypothesis_plot_ulr(x, y, theta, legend):
+def hypothesis_plot_ulr(x, y, theta):
     ax = plt.subplot(1, 2, 1)
-    ax.set_title('Hypothesis Function and Scatter Plot')
+    ax.set_title('Analytical Solution: Unweighted Linear Regression')
 
     x_line = np.linspace(xlim[0], xlim[1], 200)
     x_line.shape = [200, 1]
@@ -22,7 +22,7 @@ def hypothesis_plot_ulr(x, y, theta, legend):
 
     plt.scatter(x, y)
     hypothesis_function, = plt.plot(x_line, y_line, '#FF4500')
-    ax.legend([legend])
+    ax.legend(["theta: %s" % (theta_ulr_normal)])
 
 
 def normalize(x):
@@ -62,7 +62,7 @@ def get_y(x, theta):
 X, Y, xlim, ylim = my_utils.read_files("weightedX.csv", "weightedY.csv")
 theta_ulr_normal = ulr_normal(X, Y)
 
-hypothesis_plot_ulr(X, Y, theta_ulr_normal, "theta: %s" % (theta_ulr_normal))
 print(wlr_normal(X, Y, 4, 0.8))
+hypothesis_plot_ulr(X, Y, theta_ulr_normal)
 
 plt.show()
