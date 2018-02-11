@@ -65,6 +65,8 @@ def newtons_method(x, y, max_iter, threshold):
         loss = temp[np.argmax(gradient)]
 
         print(iter, theta, loss)
+        if(theta[2] != 0):
+            update_decision_boundary_plot(theta, legend % (iter, theta, threshold, loss))
 
         if (loss < threshold or iter == max_iter):
             break
