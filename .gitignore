@@ -111,3 +111,9 @@ ENV/
 /mcs-ml-assignments.sublime-project
 
 /mcs-ml-assignments.sublime-workspace
+
+/bin/
+
+/include/
+
+/pip-selfcheck.json
