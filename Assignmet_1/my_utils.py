@@ -3,7 +3,7 @@ import pandas as pd
 
 def normalize(x):
     mean = np.mean(x, axis=0)
-    std = np.std(x)
+    std = np.std(x, axis=0)
     return np.apply_along_axis(lambda x: (x - mean) / std, 1, x)
 
 def read_files(x_file, y_file):
