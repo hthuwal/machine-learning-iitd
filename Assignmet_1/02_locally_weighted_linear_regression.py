@@ -47,10 +47,18 @@ def get_weight_matrix(x, tau):
     return xis
 
 
+def wlr_normal(x, y, cur_x, tau):
+    W = get_weight_matrix(cur_x, tau)
+    theta = np.matrix(x.T @ W @ x)
+    theta = theta.I @ x.T @ W @ y
+    theta = np.squeeze(np.asarray(theta))
+    return theta
+
+
 X, Y, xlim, ylim = my_utils.read_files("weightedX.csv", "weightedY.csv")
 theta_ulr_normal = ulr_normal(X, Y)
 
-get_weight_matrix(4, 5)
 hypothesis_plot_ulr(X, Y, theta_ulr_normal, "theta: %s" % (theta_ulr_normal))
+print(wlr_normal(X, Y, 4, 0.8))
 
 plt.show()
