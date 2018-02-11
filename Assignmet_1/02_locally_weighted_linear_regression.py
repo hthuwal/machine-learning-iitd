@@ -86,4 +86,9 @@ theta_ulr_normal = ulr_normal(X, Y)
 hypothesis_plot_ulr(X, Y, theta_ulr_normal)
 tau = 0.8
 hypothesis_plot_wlr(X, Y, 100.0)
+
+mng = plt.get_current_fig_manager()
+# mng.full_screen_toggle()
+mng.resize(*mng.window.maxsize())
+
 plt.show()
