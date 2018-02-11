@@ -5,7 +5,7 @@ from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import numpy as np
-import pandas as pd
+import my_utils
 
 legend = """
     iteration: %d
@@ -188,20 +188,7 @@ def normalize(x):
     return np.apply_along_axis(lambda x: (x - mean) / std, 1, x)
 
 
-X = pd.read_csv("dataset/linearX.csv", header=None)
-X = X.as_matrix()
-X = normalize(X)
-temp = X.flatten()
-std = np.std(temp)
-xlim = (temp[np.argmin(temp)] - std, temp[np.argmax(temp)] + std)
-X = np.insert(X, 0, 1.0, axis=1)
-
-
-Y = pd.read_csv("dataset/linearY.csv", header=None)
-Y = Y.as_matrix().flatten()
-std = np.std(Y)
-ylim = (Y[np.argmin(Y)] - std, Y[np.argmax(Y)] + std)
-
+X, Y, xlim, ylim = my_utils.read_files("linearX.csv", "linearY.csv")
 
 theta0 = np.arange(-1, 2, 0.01)
 theta1 = np.arange(0, 0.0026, 0.0001)
