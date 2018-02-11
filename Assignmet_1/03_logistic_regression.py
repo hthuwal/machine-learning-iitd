@@ -2,6 +2,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import my_utils
 
+legend = """
+    iteration: %d
+    theta: %s
+    threshold: %g
+    gradient(loss): %g
+    """
+
 
 def g(z):
     return 1 / (1 + np.exp(-z))
@@ -99,19 +106,20 @@ def decision_boundary_plot(x, y):
     plt.xlim(x1_lim)
     plt.ylim(x2_lim)
 
-    plt.scatter(xone_yis0, xtwo_yis0, marker='o')
-    plt.scatter(xone_yis1, xtwo_yis1, marker='x')
+    y0 = plt.scatter(xone_yis0, xtwo_yis0, marker='o')
+    y1 = plt.scatter(xone_yis1, xtwo_yis1, marker='x')
     decision_boundary, = plt.plot(x1_line, x2_line, '#FF4500')
 
-    return decision_boundary, ax
+    return decision_boundary, ax, y0, y1
 
 
 def update_decision_boundary_plot(theta, cur_legend):
     x1_line = np.linspace(x1_lim[0], x1_lim[1], 200)
     x1_line.shape = [200, 1]
     x2_line = np.array([-((theta[0] + theta[1] * x1) / theta[2]) for x1 in x1_line])
-    db.set_ydata(y_line)
-    bplot.legend([cur_legend])
+    db.set_ydata(x2_line)
+    bplot.legend([y0, y1, db], ['class0', 'class1', cur_legend])
+    plt.pause(2)
 
 
 data = my_utils.read_files("logisticX.csv", "logisticY.csv")
@@ -131,8 +139,6 @@ mng = plt.get_current_fig_manager()
 # mng.full_screen_toggle()
 mng.resize(*mng.window.maxsize())
 
-db, bplot = decision_boundary_plot(X, Y)
-# print(gradient_ltheta(X, Y, np.array([1, 2, 3])))
-# print(hessian_ltheta(X, Y, np.array([1, 2, 3])))
+db, bplot, y0, y1 = decision_boundary_plot(X, Y)
 newtons_method(X, Y, 500, 1.0e-15)
 plt.show()
