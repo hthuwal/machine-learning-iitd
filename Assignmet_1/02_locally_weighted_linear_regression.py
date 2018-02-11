@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import my_utils
 
 
-def hypothesis_plot(x, y, theta, legend):
+def hypothesis_plot_ulr(x, y, theta, legend):
     ax = plt.subplot(1, 2, 1)
     ax.set_title('Hypothesis Function and Scatter Plot')
 
@@ -50,7 +50,7 @@ def get_weight_matrix(x, tau):
 X, Y, xlim, ylim = my_utils.read_files("weightedX.csv", "weightedY.csv")
 theta_ulr_normal = ulr_normal(X, Y)
 
-hypothesis_plot(X, Y, theta_ulr_normal, "theta: %s" % (theta_ulr_normal))
 get_weight_matrix(4, 5)
+hypothesis_plot_ulr(X, Y, theta_ulr_normal, "theta: %s" % (theta_ulr_normal))
 
 plt.show()
