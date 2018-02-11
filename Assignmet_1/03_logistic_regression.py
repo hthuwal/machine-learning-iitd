@@ -61,7 +61,8 @@ def newtons_method(x, y, max_iter, threshold):
         if (loss < threshold or iter == max_iter):
             break
 
-        theta = theta - hessian_ltheta(x, y, theta).I @ gradient  # update
+        theta = theta - np.array(hessian_ltheta(x, y, theta).I @ gradient)  # update
+        theta.shape = [num_features + 1, ]
         iter += 1
 
 
