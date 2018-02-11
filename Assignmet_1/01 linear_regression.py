@@ -188,13 +188,6 @@ def normalize(x):
     return np.apply_along_axis(lambda x: (x - mean) / std, 1, x)
 
 
-def analytical_solution(x, y):
-    theta = np.matrix(x.T @ x)
-    theta = theta.I @ x.T @ y
-    theta = np.squeeze(np.asarray(theta))
-    return theta
-
-
 X = pd.read_csv("dataset/linearX.csv", header=None)
 X = X.as_matrix()
 X = normalize(X)
@@ -237,5 +230,4 @@ bgd(X, Y, 0.021, 100, 0.0000000001, loss_function="change_in_theta")
 # bgd(X, Y, 0.01, 50000, 0.000119480, loss_function="error")
 # bgd(X, Y, 0.01, 50000, 0.000000000001, loss_function="change_in_error")
 
-print("Analytical Solution is:", analytical_solution(X, Y))
 plt.show()
