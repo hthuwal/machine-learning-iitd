@@ -54,6 +54,10 @@ def wlr_normal(x, y, cur_x, tau):
     theta = np.squeeze(np.asarray(theta))
     return theta
 
+def get_y(x, theta):
+    x = np.array([1, x])
+    return theta.T @ x
+
 
 X, Y, xlim, ylim = my_utils.read_files("weightedX.csv", "weightedY.csv")
 theta_ulr_normal = ulr_normal(X, Y)
