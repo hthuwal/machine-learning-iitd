@@ -15,8 +15,8 @@ def hypothesis_plot_ulr(x, y, theta):
     x = np.delete(x, 0, axis=1)
     x_line = np.delete(x_line, 0, axis=1)
 
-    plt.xlabel("Acidity")
-    plt.ylabel("Density")
+    plt.xlabel("X")
+    plt.ylabel("Y")
     plt.xlim(xlim)
     plt.ylim(ylim)
 
@@ -83,12 +83,12 @@ def hypothesis_plot_wlr(x, y, tau):
 X, Y, xlim, ylim = my_utils.read_files("weightedX.csv", "weightedY.csv")
 theta_ulr_normal = ulr_normal(X, Y)
 
+fig = plt.figure(figsize=(1920/96, 1080/96), dpi=96) # forcing it to be of size 1920x1080
+
 hypothesis_plot_ulr(X, Y, theta_ulr_normal)
 tau = 0.8
-hypothesis_plot_wlr(X, Y, 100.0)
+hypothesis_plot_wlr(X, Y, 0.1)
 
-mng = plt.get_current_fig_manager()
-# mng.full_screen_toggle()
-mng.resize(*mng.window.maxsize())
-
+# plt.pause(2)
+plt.savefig("wlr/"+"theta_0.1.png")
 plt.show()
