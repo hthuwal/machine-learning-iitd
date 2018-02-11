@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import my_utils
 
 
@@ -66,6 +67,53 @@ def newtons_method(x, y, max_iter, threshold):
         iter += 1
 
 
+def decision_boundary_plot(x, y):
+    ax = fig.add_subplot(1, 1, 1)
+    ax.set_title('Scatter Plot and decision boundary')
+
+    xone = x[:, 1]
+    xtwo = x[:, 2]
+
+    xone_yis1 = []
+    xtwo_yis1 = []
+
+    xone_yis0 = []
+    xtwo_yis0 = []
+
+    for x1, x2, y in zip(xone, xtwo, y):
+        if y == 1:
+            xone_yis1.append(x1)
+            xtwo_yis1.append(x2)
+        else:
+            xone_yis0.append(x1)
+            xtwo_yis0.append(x2)
+
+    x1_line = np.linspace(x1_lim[0], x1_lim[1], 200)
+    x1_line.shape = [200, 1]
+    theta = np.zeros([x.shape[1], ])
+    theta[2] = 1
+    x2_line = np.array([-((theta[0] + theta[1] * x1) / theta[2]) for x1 in x1_line])
+
+    plt.xlabel("x1")
+    plt.ylabel("x2")
+    plt.xlim(x1_lim)
+    plt.ylim(x2_lim)
+
+    plt.scatter(xone_yis0, xtwo_yis0, marker='o')
+    plt.scatter(xone_yis1, xtwo_yis1, marker='x')
+    decision_boundary, = plt.plot(x1_line, x2_line, '#FF4500')
+
+    return decision_boundary, ax
+
+
+def update_decision_boundary_plot(theta, cur_legend):
+    x1_line = np.linspace(x1_lim[0], x1_lim[1], 200)
+    x1_line.shape = [200, 1]
+    x2_line = np.array([-((theta[0] + theta[1] * x1) / theta[2]) for x1 in x1_line])
+    db.set_ydata(y_line)
+    bplot.legend([cur_legend])
+
+
 data = my_utils.read_files("logisticX.csv", "logisticY.csv")
 X = data[0]
 Y = data[1]
@@ -76,6 +124,15 @@ argmin = np.argmin(X, axis=0)
 x1_lim = (X[argmin[1]][1] - std[1], X[argmax[1]][1] + std[1])
 x2_lim = (X[argmin[2]][2] - std[2], X[argmax[2]][2] + std[2])
 
+
+fig = plt.figure()
+
+mng = plt.get_current_fig_manager()
+# mng.full_screen_toggle()
+mng.resize(*mng.window.maxsize())
+
+db, bplot = decision_boundary_plot(X, Y)
 # print(gradient_ltheta(X, Y, np.array([1, 2, 3])))
 # print(hessian_ltheta(X, Y, np.array([1, 2, 3])))
 newtons_method(X, Y, 500, 1.0e-15)
+plt.show()
