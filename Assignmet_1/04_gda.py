@@ -58,7 +58,38 @@ def get_covariance(mu0, mu1, same=True):
         return sigma0, sigma1
 
 
-def decision_boundary_plot(x, y):
+def equation_of_boundary(x, mu0, mu1, sigma0, sigma1, phi):
+    term1 = np.float64(((x - mu1).T @ sigma1.I @ (x - mu1)) / 2)
+    term2 = np.float64(((x - mu0).T @ sigma0.I @ (x - mu0)) / 2)
+    term3 = np.log(phi / (1 - phi))
+    term4 = (np.log(np.linalg.det(sigma1) / np.linalg.det(sigma0))) / 2
+
+    # print(term1, term2, term3, term4)
+    return term1 - term2 - term3 + term4
+
+
+def plot_decision_boundary(mu0, mu1, sigma0, sigma1, phi, color):
+
+    x1 = np.linspace(x1_lim[0], x1_lim[1], 20)
+    x2 = np.linspace(x2_lim[0], x2_lim[1], 20)
+    x1, x2 = np.meshgrid(x1, x2)
+
+    z = np.zeros(x1.shape)
+
+    mu0 = mu0.reshape(2, 1)
+    mu1 = mu1.reshape(2, 1)
+    sigma0 = np.matrix(sigma0)
+    sigma1 = np.matrix(sigma1)
+    # TODO do this using some numpy trick
+    for i in range(0, len(z)):
+        for j in range(0, len(z[0])):
+            x = np.array([x1[i][j], x2[i][j]]).reshape(2, 1)
+            z[i][j] = equation_of_boundary(x, mu0, mu1, sigma0, sigma1, phi)
+
+    cs = bplot.contour(x1, x2, z, levels=[0], colors=color)
+
+
+def scatterplot(x, y):
     ax = fig.add_subplot(1, 1, 1)
     ax.set_title('Scatter Plot and decision boundary')
 
@@ -118,8 +149,17 @@ mng = plt.get_current_fig_manager()
 # mng.full_screen_toggle()
 mng.resize(*mng.window.maxsize())
 
-decision_boundary_plot(X, Y)
-mu0, mu1 = get_mu0(), get_mu1()
-sigma0, sigma1 = get_covariance(mu0, mu1, same=False)
-print(sigma0, "\n", sigma1)
+bplot, alaska, canada = scatterplot(X, Y)
+
+Phi = get_phi()
+Mu0, Mu1 = get_mu0(), get_mu1()
+Sigma = get_covariance(Mu0, Mu1)
+Sigma0, Sigma1 = get_covariance(Mu0, Mu1, same=False)
+
+ans = "phi: \n%s\nMu0: \n%s\nMu1: \n%s\nsigma: \n%s\nsigma0: \n%s\nsigma1: \n%s\n"
+print(ans % (Phi, Mu0, Mu1, Sigma, Sigma0, Sigma1))
+
+plot_decision_boundary(Mu0, Mu1, Sigma0, Sigma1, Phi, '#4B0082')
+plot_decision_boundary(Mu0, Mu1, Sigma, Sigma, Phi, 'red')
+
 plt.show()
