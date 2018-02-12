@@ -17,9 +17,13 @@ legend = """
     """
 
 
-def hypothesis_plot(x, y):
-    ax = plt.subplot(gs[0, :])
-    ax.set_title('Hypothesis Function and Scatter Plot')
+def hypothesis_plot(x, y, subplot=True):
+    if subplot:
+        global fig
+        ax = fig.add_subplot(gs[0, :])
+    else:
+        fig = plt.figure(1)
+        ax = plt.subplot(1, 1, 1)
 
     x_line = np.linspace(xlim[0], xlim[1], 200)
     x_line.shape = [200, 1]
@@ -38,6 +42,9 @@ def hypothesis_plot(x, y):
     plt.scatter(x, y)
     hypothesis_function, = plt.plot(x_line, y_line, '#FF4500')
 
+    if not subplot:
+        return fig, hypothesis_function, ax
+
     return hypothesis_function, ax
 
 
@@ -50,8 +57,14 @@ def update_hypothesis_plot(theta, cur_legend):
     hplot.legend([cur_legend])
 
 
-def plot_error_surface():
-    ax = fig.add_subplot(gs[1, 0], projection='3d')
+def plot_error_surface(subplot=True):
+    if subplot:
+        global fig
+        ax = fig.add_subplot(gs[1, 0], projection='3d')
+    else:
+        fig = plt.figure(2)
+        ax = plt.subplot(1, 1, 1, projection='3d')
+
     ax.set_title("3D surface of Error Function")
     surf = ax.plot_surface(theta0, theta1, jtheta, cmap='viridis')
     ax.set_zlim(-1, 100)
@@ -70,7 +83,10 @@ def plot_error_surface():
     # Add a color bar which maps values to colors.
     fig.colorbar(surf, shrink=0.5, aspect=5)
 
-    return error_3d
+    if not subplot:
+        return fig, error_3d, ax
+
+    return error_3d, ax
 
 
 def update_error_surface(theta):
@@ -83,10 +99,16 @@ def update_error_surface(theta):
     error_3d.set_3d_properties(zs)
 
 
-def plot_error_contours():
-    ax = fig.add_subplot(gs[1, 1])
+def plot_error_contours(subplot=True):
+    if subplot:
+        global fig
+        ax = fig.add_subplot(gs[1, 1])
+    else:
+        fig = plt.figure(3)
+        ax = plt.subplot(1, 1, 1)
+
     ax.set_title("Contours of Error Function")
-    cs = ax.contour(theta0, theta1, jtheta, 10)
+    cs = ax.contour(theta0, theta1, jtheta, 1)
     # plt.clabel(cs, inline=1)
 
     ax.set_xlabel('theta0')
@@ -101,6 +123,9 @@ def plot_error_contours():
     error_cs, = ax.plot([0], [0], marker='o', markersize=3, color="#FF4500")
     # Add a color bar which maps values to colors.
     # fig.colorbar(surf, shrink=0.5, aspect=5)
+
+    if not subplot:
+        return fig, error_cs, cs, ax
 
     return error_cs, cs, ax
 
@@ -142,7 +167,7 @@ def bgd(x, y, eeta, max_iter, threshold, loss_function="change_in_theta"):
     theta = np.zeros([num_features + 1, ])
     old_theta = np.zeros([num_features + 1, ])
     gradient = np.zeros([num_features + 1, ])
-
+    update_plots(theta, "Initializing")
     iter = 0
     while True:
         iter += 1
@@ -203,19 +228,35 @@ for i in range(0, len(jtheta)):
             np.array([theta0[i][j], theta1[i][j]]))
 
 gs = gridspec.GridSpec(2, 2)
-# fig = plt.figure(figsize=(1920/96, 1080/96), dpi=96) # forcing it to be of size 1920x1080
-fig = plt.figure()
-hthetax, hplot = hypothesis_plot(X, Y)
-error_3d = plot_error_surface()
-error_cs, cs, cs_plot = plot_error_contours()
 
-mng = plt.get_current_fig_manager()
-# mng.full_screen_toggle()
-mng.resize(*mng.window.maxsize())
 
-bgd(X, Y, 0.021, 100, 0.0000000001, loss_function="change_in_theta")
+subplot = True
+
+if subplot:
+    fig = plt.figure(1)
+    hthetax, hplot = hypothesis_plot(X, Y, subplot=subplot)
+    error_3d, surf_plot = plot_error_surface(subplot=subplot)
+    error_cs, cs, cs_plot = plot_error_contours(subplot=subplot)
+
+else:
+    fig1, hthetax, hplot = hypothesis_plot(X, Y, subplot=subplot)
+    fig2, error_3d, surf_plot = plot_error_surface(subplot=subplot)
+    fig3, error_cs, cs, cs_plot = plot_error_contours(subplot=subplot)
+
+
+# bgd(X, Y, 0.001, 100, 0.0000000001, loss_function="change_in_theta")
 # bgd(X, Y, 0.001, 100, 0.0000001, loss_function="gradient")
 # bgd(X, Y, 0.01, 50000, 0.000119480, loss_function="error")
-# bgd(X, Y, 0.01, 50000, 0.000000000001, loss_function="change_in_error")
+mng = plt.get_current_fig_manager()
+mng.resize(*mng.window.maxsize())
+
+bgd(X, Y, 0.01, 50000, 1.1e-5, loss_function="change_in_error")
+
+if subplot:
+    fig.savefig("bgd_b_c_d.png")
+else:
+    fig1.savefig("bgd_b.png")
+    fig2.savefig("bgd_c.png")
+    fig3.savefig("bgd_d.png")
 
 plt.show()
