@@ -351,7 +351,7 @@ else:
 # bgd(X, Y, 0.01, 50000, 0.000119480, loss_function="error")
 
 eeta = 0.019
-bgd(X, Y, eeta, 100, 1.1e-5, loss_function="change_in_error") # calling gradient descent
+bgd(X, Y, eeta, 100, 1.1e-5, loss_function="change_in_error")  # calling gradient descent
 
 # if subplot:
 #     fig.savefig("Plots/bgd/bgd_b_c_d_%g.png" % eeta)
