@@ -1,5 +1,6 @@
 import my_utils
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 def get_phi():
@@ -57,6 +58,46 @@ def get_covariance(mu0, mu1, same=True):
         return sigma0, sigma1
 
 
+def decision_boundary_plot(x, y):
+    ax = fig.add_subplot(1, 1, 1)
+    ax.set_title('Scatter Plot and decision boundary')
+
+    xone = x[:, 0]
+    xtwo = x[:, 1]
+
+    xone_yis1 = []
+    xtwo_yis1 = []
+
+    xone_yis0 = []
+    xtwo_yis0 = []
+
+    for x1, x2, y in zip(xone, xtwo, y):
+        if y == 1:
+            xone_yis1.append(x1)
+            xtwo_yis1.append(x2)
+        else:
+            xone_yis0.append(x1)
+            xtwo_yis0.append(x2)
+
+    # x1_line = np.linspace(x1_lim[0], x1_lim[1], 200)
+    # x1_line.shape = [200, 1]
+    # theta = np.zeros([x.shape[1], ])
+    # theta[2] = 1
+    # x2_line = np.array([-((theta[0] + theta[1] * x1) / theta[2]) for x1 in x1_line])
+
+    plt.xlabel("x1")
+    plt.ylabel("x2")
+    plt.xlim(x1_lim)
+    plt.ylim(x2_lim)
+
+    y0 = plt.scatter(xone_yis0, xtwo_yis0, marker='o')
+    y1 = plt.scatter(xone_yis1, xtwo_yis1, marker='x')
+    # decision_boundary, = plt.plot(x1_line, x2_line, '#FF4500')
+    ax.legend([y0, y1], ['Alaska', 'Canada'])
+    # return decision_boundary,ax, y0, y1
+    return ax, y0, y1
+
+
 data = my_utils.read_files("q4x.dat", "q4y.dat", sep='\s+')
 X = data[0]
 X = np.delete(X, 0, axis=1)  # in gda there is no intercept term
@@ -71,6 +112,14 @@ x2_lim = (X[argmin[1]][1] - std[1], X[argmax[1]][1] + std[1])
 num_yi_is_1 = np.sum(Y)  # because rest are zero so sum
 num_yi_is_0 = len(Y) - num_yi_is_1
 
+fig = plt.figure()
+
+mng = plt.get_current_fig_manager()
+# mng.full_screen_toggle()
+mng.resize(*mng.window.maxsize())
+
+decision_boundary_plot(X, Y)
 mu0, mu1 = get_mu0(), get_mu1()
 sigma0, sigma1 = get_covariance(mu0, mu1, same=False)
 print(sigma0, "\n", sigma1)
+plt.show()
