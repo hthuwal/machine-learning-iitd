@@ -106,5 +106,5 @@ tau = 10
 hypothesis_plot_wlr(X, Y, tau)
 
 plt.pause(0.2)
-plt.savefig("wlr/" + "tau_%0.2f.png" % tau)
+# plt.savefig("Plots/wlr/" + "tau_%0.2f.png" % tau)
 plt.show()

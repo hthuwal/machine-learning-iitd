@@ -121,7 +121,7 @@ def update_decision_boundary_plot(theta, cur_legend):
     x2_line = np.array([-((theta[0] + theta[1] * x1) / theta[2]) for x1 in x1_line])
     db.set_ydata(x2_line)
     bplot.legend([y0, y1, db], ['class0', 'class1', cur_legend])
-    plt.pause(2)
+    plt.pause(0.2)
 
 
 data = my_utils.read_files("logisticX.csv", "logisticY.csv")
@@ -143,4 +143,5 @@ mng.resize(*mng.window.maxsize())
 
 db, bplot, y0, y1 = decision_boundary_plot(X, Y)
 newtons_method(X, Y, 500, 1.0e-15)
+# plt.savefig("Plots/logistic_regression.png")
 plt.show()

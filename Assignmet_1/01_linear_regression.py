@@ -253,11 +253,11 @@ else:
 eeta = 0.025
 bgd(X, Y, eeta, 50000, 1.1e-5, loss_function="change_in_error")
 
-if subplot:
-    fig.savefig("bgd_b_c_d_%g.png" % eeta)
-else:
-    fig1.savefig("bgd_b.png")
-    fig2.savefig("bgd_c.png")
-    fig3.savefig("bgd_d.png")
+# if subplot:
+#     fig.savefig("Plots/bgd/bgd_b_c_d_%g.png" % eeta)
+# else:
+#     fig1.savefig("Plots/bgd/bgd_b.png")
+#     fig2.savefig("Plots/bgd/bgd_c.png")
+#     fig3.savefig("Plots/bgd/bgd_d.png")
 
 plt.show()
