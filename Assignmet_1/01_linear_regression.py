@@ -239,7 +239,7 @@ if subplot:
     error_cs, cs, cs_plot = plot_error_contours(subplot=subplot)
     mng = plt.get_current_fig_manager()
     mng.resize(*mng.window.maxsize())
-    
+
 else:
     fig1, hthetax, hplot = hypothesis_plot(X, Y, subplot=subplot)
     fig2, error_3d, surf_plot = plot_error_surface(subplot=subplot)
@@ -250,11 +250,11 @@ else:
 # bgd(X, Y, 0.001, 100, 0.0000001, loss_function="gradient")
 # bgd(X, Y, 0.01, 50000, 0.000119480, loss_function="error")
 
-
-bgd(X, Y, 0.01, 50000, 1.1e-5, loss_function="change_in_error")
+eeta = 0.025
+bgd(X, Y, eeta, 50000, 1.1e-5, loss_function="change_in_error")
 
 if subplot:
-    fig.savefig("bgd_b_c_d.png")
+    fig.savefig("bgd_b_c_d_%g.png" % eeta)
 else:
     fig1.savefig("bgd_b.png")
     fig2.savefig("bgd_c.png")
