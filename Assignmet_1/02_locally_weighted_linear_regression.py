@@ -79,6 +79,7 @@ def hypothesis_plot_wlr(x, y, tau):
     plt.scatter(x_wlr, y_wlr, s=3)  # curve resultant of
     plt.legend(["tau: %0.4f" % tau])
 
+
 def fun(x, y):
     taus = 1 / np.linspace(0, 10, 50)
     for tau in taus:
@@ -93,7 +94,7 @@ X, Y, xlim, ylim = my_utils.read_files("weightedX.csv", "weightedY.csv")
 theta_ulr_normal = ulr_normal(X, Y)
 
 # fig = plt.figure(figsize=(1920 / 96, 1080 / 96), dpi=96)  # forcing it to be of size 1920x1080
-fig=plt.figure()
+fig = plt.figure()
 
 mng = plt.get_current_fig_manager()
 # mng.full_screen_toggle()
