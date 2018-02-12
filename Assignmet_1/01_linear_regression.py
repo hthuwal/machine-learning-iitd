@@ -74,7 +74,7 @@ def plot_error_surface(subplot=True):
 
     ax.zaxis.set_major_formatter(FormatStrFormatter('%.01f'))
     ax.xaxis.set_major_formatter(FormatStrFormatter('%.01f'))
-    ax.yaxis.set_major_formatter(FormatStrFormatter('%.08f'))
+    ax.yaxis.set_major_formatter(FormatStrFormatter('%.01f'))
 
     init_theta = np.zeros([X.shape[1], ])
     init_error = mean_squared_error(init_theta)
@@ -114,13 +114,13 @@ def plot_error_contours(subplot=True):
     ax.set_xlabel('theta0')
     ax.set_ylabel('theta1')
 
-    ax.xaxis.set_major_formatter(FormatStrFormatter('%.08f'))
+    ax.xaxis.set_major_formatter(FormatStrFormatter('%.01f'))
     ax.yaxis.set_major_formatter(FormatStrFormatter('%.01f'))
 
     init_theta = np.zeros([X.shape[1], ])
     init_error = mean_squared_error(init_theta)
 
-    error_cs, = ax.plot([0], [0], marker='o', markersize=3, color="#FF4500")
+    error_cs, = ax.plot([0], [0], marker='o', color="#FF4500", linestyle="None")
     # Add a color bar which maps values to colors.
     # fig.colorbar(surf, shrink=0.5, aspect=5)
 
@@ -216,8 +216,8 @@ def normalize(x):
 
 X, Y, xlim, ylim = my_utils.read_files("linearX.csv", "linearY.csv")
 
-theta0 = np.arange(-1, 2, 0.01)
-theta1 = np.arange(0, 0.0026, 0.0001)
+theta0 = np.linspace(0, 2, 100)
+theta1 = np.linspace(-1, 1, 100)
 theta0, theta1 = np.meshgrid(theta0, theta1)
 jtheta = np.zeros(theta0.shape)
 
