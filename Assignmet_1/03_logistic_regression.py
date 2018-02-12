@@ -11,10 +11,16 @@ legend = """
 
 
 def g(z):
+    """
+        Calculate g(z)
+    """
     return 1 / (1 + np.exp(-z))
 
 
 def gradient_ltheta(x, y, theta):
+    """
+        Find gradient of ltheta at given theta
+    """
     num_examples = x.shape[0]
     num_features = x.shape[1] - 1
     gradient = np.zeros([num_features + 1, ])
@@ -32,6 +38,9 @@ def gradient_ltheta(x, y, theta):
 
 
 def hessian_ltheta(x, y, theta):
+    """
+        Find hessian of Ltheta
+    """
     num_examples = x.shape[0]
     num_features = x.shape[1] - 1
 
@@ -51,6 +60,16 @@ def hessian_ltheta(x, y, theta):
 
 
 def newtons_method(x, y, max_iter, threshold):
+    """
+
+    Newton's update method for logistic regression
+
+    Arguments:
+        x  -- Design Matrix
+        y  -- outputs
+        max_iter  -- maximum allowed number of iterations
+        threshold  -- threshold for loss function
+    """
     num_examples = x.shape[0]
     num_features = x.shape[1] - 1
 
@@ -62,6 +81,8 @@ def newtons_method(x, y, max_iter, threshold):
         gradient = gradient_ltheta(x, y, theta)
 
         temp = np.abs(gradient)
+
+        # loss function is the value of gradient itself
         loss = temp[np.argmax(gradient)]
 
         print(iter, theta, loss)
@@ -71,7 +92,8 @@ def newtons_method(x, y, max_iter, threshold):
         if (loss < threshold or iter == max_iter):
             break
 
-        theta = theta - np.array(hessian_ltheta(x, y, theta).I @ gradient)  # update
+        # theta = theta - hessian inverse * gradient
+        theta = theta - np.array(hessian_ltheta(x, y, theta).I @ gradient)  # update theta
         theta.shape = [num_features + 1, ]
         iter += 1
 
@@ -80,6 +102,9 @@ def newtons_method(x, y, max_iter, threshold):
 
 
 def decision_boundary_plot(x, y):
+    """
+        Function to plot the initial decision boundary plot
+    """
     ax = fig.add_subplot(1, 1, 1)
     ax.set_title('Scatter Plot and decision boundary')
 
@@ -119,6 +144,9 @@ def decision_boundary_plot(x, y):
 
 
 def update_decision_boundary_plot(theta, cur_legend):
+    """
+        Function to update the decision boundary in the plot
+    """
     x1_line = np.linspace(x1_lim[0], x1_lim[1], 200)
     x1_line.shape = [200, 1]
     x2_line = np.array([-((theta[0] + theta[1] * x1) / theta[2]) for x1 in x1_line])
@@ -127,6 +155,7 @@ def update_decision_boundary_plot(theta, cur_legend):
     plt.pause(0.2)
 
 
+# read files
 data = my_utils.read_files("logisticX.csv", "logisticY.csv")
 X = data[0]
 Y = data[1]
@@ -139,12 +168,11 @@ x2_lim = (X[argmin[2]][2] - std[2], X[argmax[2]][2] + std[2])
 
 
 fig = plt.figure()
-
 mng = plt.get_current_fig_manager()
-# mng.full_screen_toggle()
 mng.resize(*mng.window.maxsize())
 
 db, bplot, y0, y1 = decision_boundary_plot(X, Y)
+
 newtons_method(X, Y, 500, 1.0e-15)
 # plt.savefig("Plots/logistic_regression.png")
 plt.show()
