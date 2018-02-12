@@ -30,14 +30,15 @@ def get_mu1():
 
 data = my_utils.read_files("q4x.dat", "q4y.dat", sep='\s+')
 X = data[0]
+X = np.delete(X, 0, axis=1)  # in gda there is no intercept term
 Y = data[1]
 cls_labels = data[4]
 std = np.std(X, axis=0)
 argmax = np.argmax(X, axis=0)
 argmin = np.argmin(X, axis=0)
 
-x1_lim = (X[argmin[1]][1] - std[1], X[argmax[1]][1] + std[1])
-x2_lim = (X[argmin[2]][2] - std[2], X[argmax[2]][2] + std[2])
+x1_lim = (X[argmin[0]][0] - std[0], X[argmax[0]][0] + std[0])
+x2_lim = (X[argmin[1]][1] - std[1], X[argmax[1]][1] + std[1])
 num_yi_is_1 = np.sum(Y)  # because rest are zero so sum
 num_yi_is_0 = len(Y) - num_yi_is_1
 
