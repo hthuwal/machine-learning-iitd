@@ -111,7 +111,7 @@ def decision_boundary_plot(x, y):
     y0 = plt.scatter(xone_yis0, xtwo_yis0, marker='o')
     y1 = plt.scatter(xone_yis1, xtwo_yis1, marker='x')
     decision_boundary, = plt.plot(x1_line, x2_line, '#FF4500')
-
+    ax.legend([y0, y1], ['class0', 'class1'])
     return decision_boundary, ax, y0, y1
 
 
