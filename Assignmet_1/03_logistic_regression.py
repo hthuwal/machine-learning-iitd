@@ -75,6 +75,9 @@ def newtons_method(x, y, max_iter, threshold):
         theta.shape = [num_features + 1, ]
         iter += 1
 
+    print("Newton's Method solution")
+    print(legend % (iter, theta, threshold, loss))
+
 
 def decision_boundary_plot(x, y):
     ax = fig.add_subplot(1, 1, 1)
