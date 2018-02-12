@@ -8,8 +8,8 @@ def get_phi():
 
 
 def get_mu0():
-    num_features = X.shape[1] - 1
-    mu0 = np.zeros([num_features + 1, ])
+    num_features = X.shape[1]
+    mu0 = np.zeros([num_features, ])
 
     for x, y in zip(X, Y):
         mu0 = mu0 + x * (1 if y == 0 else 0)
@@ -19,8 +19,8 @@ def get_mu0():
 
 
 def get_mu1():
-    num_features = X.shape[1] - 1
-    mu1 = np.zeros([num_features + 1, ])
+    num_features = X.shape[1]
+    mu1 = np.zeros([num_features, ])
 
     for x, y in zip(X, Y):
         mu1 = mu1 + x * (1 if y == 1 else 0)
@@ -30,26 +30,26 @@ def get_mu1():
 
 
 def get_covariance(mu0, mu1, same=True):
-    num_features = X.shape[1] - 1
-    mu0.shape = [num_features + 1, 1]
-    mu1.shape = [num_features + 1, 1]
+    num_features = X.shape[1]
+    mu0.shape = [num_features, 1]
+    mu1.shape = [num_features, 1]
 
     if same:
-        sigma = np.zeros([num_features + 1, num_features + 1])
+        sigma = np.zeros([num_features, num_features])
         for x, y in zip(X, Y):
             mu = mu0 if y == 0 else mu1
-            x.shape = [num_features + 1, 1]
+            x.shape = [num_features, 1]
             sigma = sigma + (x - mu) @ (x - mu).T
 
         sigma = sigma / (num_yi_is_0 + num_yi_is_1)
         return sigma
 
     else:
-        sigma0 = np.zeros([num_features + 1, num_features + 1])
-        sigma1 = np.zeros([num_features + 1, num_features + 1])
+        sigma0 = np.zeros([num_features, num_features])
+        sigma1 = np.zeros([num_features, num_features])
 
         for x, y in zip(X, Y):
-            x.shape = [num_features + 1, 1]
+            x.shape = [num_features, 1]
             sigma0 = sigma0 + ((x - mu0) @ (x - mu0).T) * (1 if y == 0 else 0)
             sigma1 = sigma1 + ((x - mu1) @ (x - mu1).T) * (1 if y == 1 else 0)
 
