@@ -5,10 +5,16 @@ import matplotlib.pyplot as plt
 
 
 def get_phi():
+    """
+        Calculate phi
+    """
     return num_yi_is_1 / (num_yi_is_1 + num_yi_is_0)
 
 
 def get_mu0():
+    """
+        Calculate mean for class 0(mu0)
+    """
     num_features = X.shape[1]
     mu0 = np.zeros([num_features, ])
 
@@ -20,6 +26,9 @@ def get_mu0():
 
 
 def get_mu1():
+    """
+        Calculate mean for class 1(mu1)
+    """
     num_features = X.shape[1]
     mu1 = np.zeros([num_features, ])
 
@@ -31,13 +40,30 @@ def get_mu1():
 
 
 def get_covariance(mu0, mu1, same=True):
+    """
+
+    Returns Covariance Matrix
+
+    Arguments:
+        mu0 -- [mean of x class 0]
+        mu1 -- [mean of x class 1]
+
+    Keyword Arguments:
+        same {bool} -- [if true assumes sigma1 = sigma2 = sigma and calculates sigma
+        else calculates sigma1 and sigma2] (default: {True})
+
+    Returns:
+        return sigma or (sigma1, sigma2)
+    """
     num_features = X.shape[1]
     mu0.shape = [num_features, 1]
     mu1.shape = [num_features, 1]
 
-    if same:
+    if same:  # if assume sigma1 == sigma 2
         sigma = np.zeros([num_features, num_features])
+
         for x, y in zip(X, Y):
+
             mu = mu0 if y == 0 else mu1
             x.shape = [num_features, 1]
             sigma = sigma + (x - mu) @ (x - mu).T
@@ -59,7 +85,14 @@ def get_covariance(mu0, mu1, same=True):
         return sigma0, sigma1
 
 
-def equation_of_boundary(x, mu0, mu1, sigma0, sigma1, phi):
+def expreession_of_boundary(x, mu0, mu1, sigma0, sigma1, phi):
+    """
+        Returns the value of the value Expression for the decision boundary at any given x = [x1, x2]
+        f(x, mu0, mu1, mu1sigma1, sigma0, sigma1, phi)
+
+        if sigma0 = sigma1 = sigma then returns value of linear boundary at x = [x1, x2]
+        else returns the value of quadratic boundary at x = [x1, x2]
+    """
     term1 = np.float64(((x - mu1).T @ sigma1.I @ (x - mu1)) / 2)
     term2 = np.float64(((x - mu0).T @ sigma0.I @ (x - mu0)) / 2)
     term3 = np.log(phi / (1 - phi))
@@ -69,6 +102,10 @@ def equation_of_boundary(x, mu0, mu1, sigma0, sigma1, phi):
 
 
 def plot_decision_boundary(mu0, mu1, sigma0, sigma1, phi, color):
+    """
+        Plot the decision boundary.
+        Decision boundary = Contour of 3d plot of expression of boundary at z = 0 !!
+    """
 
     x1 = np.linspace(x1_lim[0], x1_lim[1], 20)
     x2 = np.linspace(x2_lim[0], x2_lim[1], 20)
@@ -84,13 +121,16 @@ def plot_decision_boundary(mu0, mu1, sigma0, sigma1, phi, color):
     for i in range(0, len(z)):
         for j in range(0, len(z[0])):
             x = np.array([x1[i][j], x2[i][j]]).reshape(2, 1)
-            z[i][j] = equation_of_boundary(x, mu0, mu1, sigma0, sigma1, phi)
+            z[i][j] = expreession_of_boundary(x, mu0, mu1, sigma0, sigma1, phi)
 
     cs = bplot.contour(x1, x2, z, levels=[0], colors=color)
     return cs
 
 
 def scatterplot(x, y):
+    """
+        Scatter plot of the dataset
+    """
     ax = fig.add_subplot(1, 1, 1)
     ax.set_title('Scatter Plot and decision boundary')
 
@@ -134,6 +174,8 @@ argmin = np.argmin(X, axis=0)
 
 x1_lim = (X[argmin[0]][0] - std[0], X[argmax[0]][0] + std[0])
 x2_lim = (X[argmin[1]][1] - std[1], X[argmax[1]][1] + std[1])
+
+# number of y that are 1
 num_yi_is_1 = np.sum(Y)  # because rest are zero so sum
 num_yi_is_0 = len(Y) - num_yi_is_1
 
@@ -177,5 +219,5 @@ redline = mlines.Line2D([], [], color='red')
 bplot.legend([alaska, canada, purplecurve, redline], ['Alaska', 'Canada', 'Quadratic Boundary', 'Linear Boundary'])
 
 plt.pause(0.2)
-fig.savefig("Plots/gda.png")
+# fig.savefig("Plots/gda.png")
 plt.show()
