@@ -10,10 +10,10 @@ import my_utils
 legend = """
     iteration: %d
     eeta: %g
-    theta: %s
+    theta: %0.16f %0.16f
     loss_function: %s
     threshold: %g
-    loss: %g
+    loss: %0.16f
     """
 
 
@@ -169,7 +169,7 @@ def bgd(x, y, eeta, max_iter, threshold, loss_function="change_in_theta"):
 
         print(iter, theta, loss)
 
-        cur_legend = legend % (iter, eeta, str(theta), loss_function, threshold, loss)
+        cur_legend = legend % (iter, eeta, theta[0], theta[1], loss_function, threshold, loss)
         update_plots(theta, cur_legend)
         plt.pause(0.02)
         # plt.savefig("bgd/%d.png" %iter)
@@ -180,7 +180,7 @@ def bgd(x, y, eeta, max_iter, threshold, loss_function="change_in_theta"):
         old_theta = np.array(theta)
 
     print("GDA solution")
-    print(legend % (iter, eeta, str(theta), loss_function, threshold, loss))
+    print(legend % (iter, eeta, theta[0], theta[1], loss_function, threshold, loss))
 
 
 def normalize(x):
