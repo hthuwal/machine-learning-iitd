@@ -100,10 +100,11 @@ mng = plt.get_current_fig_manager()
 # mng.full_screen_toggle()
 mng.resize(*mng.window.maxsize())
 
-# hypothesis_plot_ulr(X, Y, theta_ulr_normal)
+hypothesis_plot_ulr(X, Y, theta_ulr_normal)
 tau = 10
-fun(X, Y)
-# hypothesis_plot_wlr(X, Y, tau)
+# fun(X, Y)
+hypothesis_plot_wlr(X, Y, tau)
 
-# plt.savefig("wlr/" + "tau_%0.2f.png" % tau)
+plt.pause(0.2)
+plt.savefig("wlr/" + "tau_%0.2f.png" % tau)
 plt.show()
