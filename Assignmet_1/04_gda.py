@@ -1,5 +1,6 @@
 import my_utils
 import numpy as np
+import matplotlib.lines as mlines
 import matplotlib.pyplot as plt
 
 
@@ -64,7 +65,6 @@ def equation_of_boundary(x, mu0, mu1, sigma0, sigma1, phi):
     term3 = np.log(phi / (1 - phi))
     term4 = (np.log(np.linalg.det(sigma1) / np.linalg.det(sigma0))) / 2
 
-    # print(term1, term2, term3, term4)
     return term1 - term2 - term3 + term4
 
 
@@ -80,13 +80,14 @@ def plot_decision_boundary(mu0, mu1, sigma0, sigma1, phi, color):
     mu1 = mu1.reshape(2, 1)
     sigma0 = np.matrix(sigma0)
     sigma1 = np.matrix(sigma1)
-    # TODO do this using some numpy trick
+
     for i in range(0, len(z)):
         for j in range(0, len(z[0])):
             x = np.array([x1[i][j], x2[i][j]]).reshape(2, 1)
             z[i][j] = equation_of_boundary(x, mu0, mu1, sigma0, sigma1, phi)
 
     cs = bplot.contour(x1, x2, z, levels=[0], colors=color)
+    return cs
 
 
 def scatterplot(x, y):
@@ -110,12 +111,6 @@ def scatterplot(x, y):
             xone_yis0.append(x1)
             xtwo_yis0.append(x2)
 
-    # x1_line = np.linspace(x1_lim[0], x1_lim[1], 200)
-    # x1_line.shape = [200, 1]
-    # theta = np.zeros([x.shape[1], ])
-    # theta[2] = 1
-    # x2_line = np.array([-((theta[0] + theta[1] * x1) / theta[2]) for x1 in x1_line])
-
     plt.xlabel("x1")
     plt.ylabel("x2")
     plt.xlim(x1_lim)
@@ -123,9 +118,8 @@ def scatterplot(x, y):
 
     y0 = plt.scatter(xone_yis0, xtwo_yis0, marker='o')
     y1 = plt.scatter(xone_yis1, xtwo_yis1, marker='x')
-    # decision_boundary, = plt.plot(x1_line, x2_line, '#FF4500')
     ax.legend([y0, y1], ['Alaska', 'Canada'])
-    # return decision_boundary,ax, y0, y1
+
     return ax, y0, y1
 
 
@@ -156,10 +150,32 @@ Mu0, Mu1 = get_mu0(), get_mu1()
 Sigma = get_covariance(Mu0, Mu1)
 Sigma0, Sigma1 = get_covariance(Mu0, Mu1, same=False)
 
-ans = "phi: \n%s\nMu0: \n%s\nMu1: \n%s\nsigma: \n%s\nsigma0: \n%s\nsigma1: \n%s\n"
-print(ans % (Phi, Mu0, Mu1, Sigma, Sigma0, Sigma1))
+ans = """
+class_labels:
+%s
+\nphi: %s
+\nMu0:\n 
+%s
+\nMu1:\n
+%s
+\nsigma:\n
+%s
+\nsigma0:\n 
+%s
+\nsigma1:\n 
+%s
+"""
 
-plot_decision_boundary(Mu0, Mu1, Sigma0, Sigma1, Phi, '#4B0082')
-plot_decision_boundary(Mu0, Mu1, Sigma, Sigma, Phi, 'red')
+print(ans % (cls_labels, Phi, Mu0, Mu1, Sigma, Sigma0, Sigma1))
 
+qboundary = plot_decision_boundary(Mu0, Mu1, Sigma0, Sigma1, Phi, '#4B0082')
+linboundary = plot_decision_boundary(Mu0, Mu1, Sigma, Sigma, Phi, 'red')
+
+# proxy artists
+purplecurve = mlines.Line2D([], [], color='#4B0082')
+redline = mlines.Line2D([], [], color='red')
+bplot.legend([alaska, canada, purplecurve, redline], ['Alaska', 'Canada', 'Quadratic Boundary', 'Linear Boundary'])
+
+plt.pause(0.2)
+fig.savefig("Plots/gda.png")
 plt.show()
