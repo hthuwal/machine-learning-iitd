@@ -107,8 +107,8 @@ def plot_decision_boundary(mu0, mu1, sigma0, sigma1, phi, color):
         Decision boundary = Contour of 3d plot of expression of boundary at z = 0 !!
     """
 
-    x1 = np.linspace(x1_lim[0], x1_lim[1], 20)
-    x2 = np.linspace(x2_lim[0], x2_lim[1], 20)
+    x1 = np.linspace(-15, 15, 100)
+    x2 = np.linspace(-15, 15, 100)
     x1, x2 = np.meshgrid(x1, x2)
 
     z = np.zeros(x1.shape)
@@ -153,8 +153,8 @@ def scatterplot(x, y):
 
     plt.xlabel("x1")
     plt.ylabel("x2")
-    plt.xlim(x1_lim)
-    plt.ylim(x2_lim)
+    plt.xlim((-15, 15))
+    plt.ylim((-15, 15))
 
     y0 = plt.scatter(xone_yis0, xtwo_yis0, marker='o')
     y1 = plt.scatter(xone_yis1, xtwo_yis1, marker='x')
