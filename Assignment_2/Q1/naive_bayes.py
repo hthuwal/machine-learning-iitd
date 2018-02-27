@@ -50,6 +50,19 @@ def get_vocab(data):
     return v
 
 
+def calculate_paramters(data, c):
+    total_num_of_reviews = 0
+    for rating in data:
+        total_num_of_reviews += data[rating]["num_of_reviews"]
+
+    for rating in data:
+        phis[rating] = (data[rating]["num_of_reviews"] + c) / (total_num_of_reviews + c * num_classes)
+
+    for word in thetas:
+        for cls in thetas[word]:
+            thetas[word][cls] = (data[cls]["words"][word] + c) / (data[cls]["num_of_words"] + c * V)
+
+
 training_data = read_data("../imdb/imdb_train_text.txt", "../imdb/imdb_train_labels.txt")
 data = format_data(training_data)
 num_classes = len(data)
@@ -61,3 +74,5 @@ phis = dict(zip(data.keys(), np.zeros([num_classes, ])))
 thetas = {}
 for word in vocab:
     thetas[word] = dict(phis)
+
+calculate_paramters(data, 1)
