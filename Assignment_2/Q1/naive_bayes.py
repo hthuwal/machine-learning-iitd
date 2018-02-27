@@ -24,12 +24,14 @@ def read_review_and_ratings(review_file, rating_file):
             review = clean(review)  # clean review and return a list of words
 
             if rating not in data:
-                data[rating] = review
+                data[rating] = {"words": review, "num_of_reviews": 1}
             else:
-                data[rating] += review
+                data[rating]["words"] += review
+                data[rating]["num_of_reviews"] += 1
 
-    for key in data:
-        data[key] = (Counter(data[key]), len(data[key]))
+    for rating in data:
+        data[rating]["num_of_words"] = len(data[rating]["words"])
+        data[rating]["words"] = Counter(data[rating]["words"])
 
     return data
 
@@ -37,7 +39,7 @@ def read_review_and_ratings(review_file, rating_file):
 def get_vocab(data):
     v = Counter([])
     for rating in data:
-        v += data[rating][0]
+        v += data[rating]["words"]
     return v
 
 
