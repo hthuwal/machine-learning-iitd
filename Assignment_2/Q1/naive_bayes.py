@@ -3,6 +3,7 @@
 # y is Multinomial phi1 to phi10
 # Every position has same multinomial theta1 to theta|V|
 import re
+from collections import Counter
 
 extra = ["?", ".", "\"", "\'", "/", "\\", ":", ";", "(", ")"]
 
@@ -26,6 +27,9 @@ def read_review_and_ratings(review_file, rating_file):
                 data[rating] = review
             else:
                 data[rating] += review
+
+    for key in data:
+        data[key] = Counter(data[key])
 
     return data
 
