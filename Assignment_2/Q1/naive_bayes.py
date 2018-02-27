@@ -17,19 +17,24 @@ def clean(string):
     return string.split()
 
 
-def read_review_and_ratings(review_file, rating_file):
-
-    data = {}
+def read_data(review_file, rating_file):
+    data = []
     with open(review_file, 'r') as rev, open(rating_file, 'r') as rt:
         for review, rating in zip(rev, rt):
             rating = int(rating)
             review = clean(review)  # clean review and return a list of words
+            data.append((rating, review))
+    return data
 
-            if rating not in data:
-                data[rating] = {"words": review, "num_of_reviews": 1}
-            else:
-                data[rating]["words"] += review
-                data[rating]["num_of_reviews"] += 1
+
+def format_data(plain_data):
+    data = {}
+    for rating, review in plain_data:
+        if rating not in data:
+            data[rating] = {"words": list(review), "num_of_reviews": 1}
+        else:
+            data[rating]["words"] += review
+            data[rating]["num_of_reviews"] += 1
 
     for rating in data:
         data[rating]["num_of_words"] = len(data[rating]["words"])
@@ -45,7 +50,8 @@ def get_vocab(data):
     return v
 
 
-data = read_review_and_ratings("../imdb/imdb_train_text.txt", "../imdb/imdb_train_labels.txt")
+training_data = read_data("../imdb/imdb_train_text.txt", "../imdb/imdb_train_labels.txt")
+data = format_data(training_data)
 num_classes = len(data)
 vocab = get_vocab(data)
 V = len(vocab)
