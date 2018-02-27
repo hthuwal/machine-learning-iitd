@@ -2,6 +2,8 @@
 # Given a review predict the rating (1-10)
 # y is Multinomial phi1 to phi10
 # Every position has same multinomial theta1 to theta|V|
+
+import numpy as np
 import re
 from collections import Counter
 
@@ -44,5 +46,12 @@ def get_vocab(data):
 
 
 data = read_review_and_ratings("../imdb/imdb_train_text.txt", "../imdb/imdb_train_labels.txt")
+num_classes = len(data)
 vocab = get_vocab(data)
 V = len(vocab)
+
+
+phis = dict(zip(data.keys(), np.zeros([num_classes, ])))
+thetas = {}
+for word in vocab:
+    thetas[word] = dict(phis)
