@@ -6,12 +6,11 @@
 import numpy as np
 import re
 from collections import Counter
-
-extra = ["?", ".", "\"", "\'", "/", "\\", ":", ";", "(", ")"]
+from tqdm import tqdm
+# TODO code should work even if tqdm is absent
 
 
 def clean(string):
-    # TODO: this should remove faltu symbols
     string = string.lower().strip()
     string = re.sub("[^a-z0-9]", " ", string)  # removing all accept letters and numbers
     return string.split()
@@ -77,9 +76,9 @@ def run(dataset):
     count = 0
     num_samples = len(dataset)
     correct_prediction = 0
-    for actual_cls, review in dataset:
+    for actual_cls, review in tqdm(dataset):
         count += 1
-        print(count)
+        # print(count)
         if(actual_cls == predict(review, 1)):
             correct_prediction += 1
 
@@ -102,8 +101,10 @@ thetas = {}
 for word in vocab:
     thetas[word] = dict(phis)
 
-
+print("Running on Training data")
 train_accuracy = run(training_data)
-test_accuracy = run(testing_data)
+print("Training Accuracy: %f\n" % (train_accuracy))
 
-print("Training Accuracy: %f\nTest Accuracy: %f\n" % (train_accuracy, test_accuracy))
+print("Running on Testing data")
+test_accuracy = run(testing_data)
+print("Test Accuracy: %f\n" % (test_accuracy))
