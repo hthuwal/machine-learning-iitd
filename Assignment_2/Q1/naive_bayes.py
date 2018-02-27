@@ -15,11 +15,17 @@ def clean(string):
 
 
 def read_review_and_ratings(review_file, rating_file):
-    data = []
+
+    data = {}
     with open(review_file, 'r') as rev, open(rating_file, 'r') as rt:
         for review, rating in zip(rev, rt):
-            review = clean(review)
-            data.append((int(rating), review))
+            rating = int(rating)
+            review = clean(review)  # clean review and return a list of words
+
+            if rating not in data:
+                data[rating] = review
+            else:
+                data[rating] += review
 
     return data
 
