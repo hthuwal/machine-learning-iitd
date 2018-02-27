@@ -29,7 +29,7 @@ def read_review_and_ratings(review_file, rating_file):
                 data[rating] += review
 
     for key in data:
-        data[key] = Counter(data[key])
+        data[key] = (Counter(data[key]), len(data[key]))
 
     return data
 
