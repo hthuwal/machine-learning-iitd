@@ -11,8 +11,8 @@ extra = ["?", ".", "\"", "\'", "/", "\\", ":", ";", "(", ")"]
 def clean(string):
     # TODO: this should remove faltu symbols
     string = string.lower().strip()
-    # string = re.sub("[^A-Za-z ]", "", string)
-    return string
+    string = re.sub("[^a-z0-9]", " ", string)  # removing all accept letters and numbers
+    return string.split()
 
 
 def read_review_and_ratings(review_file, rating_file):
@@ -35,4 +35,4 @@ def read_review_and_ratings(review_file, rating_file):
 
 
 data = read_review_and_ratings("../imdb/imdb_train_text.txt", "../imdb/imdb_train_labels.txt")
-print(data[0])
+print(data[10])
