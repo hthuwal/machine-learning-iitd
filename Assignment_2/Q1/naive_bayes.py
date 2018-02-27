@@ -5,6 +5,7 @@
 
 import numpy as np
 import re
+import sys
 from collections import Counter
 from tqdm import tqdm
 # TODO code should work even if tqdm is absent
@@ -17,6 +18,7 @@ def clean(string):
 
 
 def read_data(review_file, rating_file):
+    print("Reading Files %s %s\n" % (review_file, rating_file))
     data = []
     with open(review_file, 'r') as rev, open(rating_file, 'r') as rt:
         for review, rating in zip(rev, rt):
@@ -85,8 +87,13 @@ def run(dataset):
     return (correct_prediction / num_samples) * 100
 
 
-training_data = read_data("../imdb/imdb_train_text.txt", "../imdb/imdb_train_labels.txt")
-testing_data = read_data("../imdb/imdb_test_text.txt", "../imdb/imdb_test_labels.txt")
+if len(sys.argv) == 2 and sys.argv[1] == "stemmed":
+    training_data = read_data("../imdb/imdb_train_text_stemmed.txt", "../imdb/imdb_train_labels.txt")
+    testing_data = read_data("../imdb/imdb_test_text_stemmed.txt", "../imdb/imdb_test_labels.txt")
+else:
+    training_data = read_data("../imdb/imdb_train_text.txt", "../imdb/imdb_train_labels.txt")
+    testing_data = read_data("../imdb/imdb_test_text.txt", "../imdb/imdb_test_labels.txt")
+
 data = format_data(training_data)
 num_classes = len(data)
 vocab = get_vocab(data)
