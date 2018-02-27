@@ -34,5 +34,13 @@ def read_review_and_ratings(review_file, rating_file):
     return data
 
 
+def get_vocab(data):
+    v = Counter([])
+    for rating in data:
+        v += data[rating][0]
+    return v
+
+
 data = read_review_and_ratings("../imdb/imdb_train_text.txt", "../imdb/imdb_train_labels.txt")
-print(data[10])
+vocab = get_vocab(data)
+V = len(vocab)
