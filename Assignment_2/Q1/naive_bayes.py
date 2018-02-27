@@ -73,14 +73,28 @@ def predict(review, c):
     return max_cls
 
 
+def run(dataset):
+    count = 0
+    num_samples = len(dataset)
+    correct_prediction = 0
+    for actual_cls, review in dataset:
+        count += 1
+        print(count)
+        if(actual_cls == predict(review, 1)):
+            correct_prediction += 1
+
+    return (correct_prediction / num_samples) * 100
+
+
 training_data = read_data("../imdb/imdb_train_text.txt", "../imdb/imdb_train_labels.txt")
+testing_data = read_data("../imdb/imdb_test_text.txt", "../imdb/imdb_test_labels.txt")
 data = format_data(training_data)
 num_classes = len(data)
 vocab = get_vocab(data)
 V = len(vocab)
 total_num_of_reviews = 0
 for rating in data:
-    total_num_of_reviews += data[rating]["num_of_reviews"]
+    total_num_of_reviews += data[rating]["num_of_samples"]
 
 
 phis = dict(zip(data.keys(), np.zeros([num_classes, ])))
@@ -88,4 +102,8 @@ thetas = {}
 for word in vocab:
     thetas[word] = dict(phis)
 
-print(predict("Awesome", 1))
+
+train_accuracy = run(training_data)
+test_accuracy = run(testing_data)
+
+print("Training Accuracy: %f\nTest Accuracy: %f\n" % (train_accuracy, test_accuracy))
