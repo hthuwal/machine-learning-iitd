@@ -50,17 +50,29 @@ def get_vocab(data):
     return v
 
 
-def calculate_paramters(data, c):
-    total_num_of_reviews = 0
-    for rating in data:
-        total_num_of_reviews += data[rating]["num_of_reviews"]
+def predict(review, c):
+    probs = np.zeros([num_classes, ])
+    classes = list(data.keys())
 
-    for rating in data:
-        phis[rating] = (data[rating]["num_of_reviews"] + c) / (total_num_of_reviews + c * num_classes)
+    probs = dict(zip(classes, probs))
 
-    for word in thetas:
-        for cls in thetas[word]:
-            thetas[word][cls] = (data[cls]["words"][word] + c) / (data[cls]["num_of_words"] + c * V)
+    for cls in probs:
+        # log(phi_cls)
+        probs[cls] += np.log10((data[cls]["num_of_reviews"] + c) / (total_num_of_reviews + c * num_classes))
+        for word in review:
+            # log(theta_word_cls)
+            probs[cls] += np.log10((data[cls]["words"][word] + c) / (data[cls]["num_of_words"] + c * V))
+
+    print(probs)
+
+    keys = list(probs.keys())
+    max_cls = keys[0]
+
+    for cls in probs:
+        if probs[cls] > probs[max_cls]:
+            max_cls = cls
+
+    return max_cls
 
 
 training_data = read_data("../imdb/imdb_train_text.txt", "../imdb/imdb_train_labels.txt")
@@ -68,6 +80,9 @@ data = format_data(training_data)
 num_classes = len(data)
 vocab = get_vocab(data)
 V = len(vocab)
+total_num_of_reviews = 0
+for rating in data:
+    total_num_of_reviews += data[rating]["num_of_reviews"]
 
 
 phis = dict(zip(data.keys(), np.zeros([num_classes, ])))
@@ -75,4 +90,4 @@ thetas = {}
 for word in vocab:
     thetas[word] = dict(phis)
 
-calculate_paramters(data, 1)
+print(predict("Awesome", 1))
