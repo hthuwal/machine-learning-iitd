@@ -57,7 +57,7 @@ def predict(review, c):
 
     for cls in probs:
         # log(phi_cls)
-        probs[cls] += np.log10((data[cls]["num_of_samples"] + c) / (total_num_of_reviews + c * num_classes))
+        probs[cls] += np.log10((data[cls]["num_of_samples"] + c) / (total_num_of_samples + c * num_classes))
         for word in review:
             # log(theta_word_cls)
             probs[cls] += np.log10((data[cls]["words"][word] + c) / (data[cls]["num_of_words"] + c * V))
@@ -91,9 +91,9 @@ data = format_data(training_data)
 num_classes = len(data)
 vocab = get_vocab(data)
 V = len(vocab)
-total_num_of_reviews = 0
+total_num_of_samples = 0
 for rating in data:
-    total_num_of_reviews += data[rating]["num_of_samples"]
+    total_num_of_samples += data[rating]["num_of_samples"]
 
 
 phis = dict(zip(data.keys(), np.zeros([num_classes, ])))
