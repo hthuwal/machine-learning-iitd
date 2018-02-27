@@ -31,10 +31,10 @@ def format_data(plain_data):
     data = {}
     for rating, review in plain_data:
         if rating not in data:
-            data[rating] = {"words": list(review), "num_of_reviews": 1}
+            data[rating] = {"words": list(review), "num_of_samples": 1}
         else:
             data[rating]["words"] += review
-            data[rating]["num_of_reviews"] += 1
+            data[rating]["num_of_samples"] += 1
 
     for rating in data:
         data[rating]["num_of_words"] = len(data[rating]["words"])
@@ -58,12 +58,10 @@ def predict(review, c):
 
     for cls in probs:
         # log(phi_cls)
-        probs[cls] += np.log10((data[cls]["num_of_reviews"] + c) / (total_num_of_reviews + c * num_classes))
+        probs[cls] += np.log10((data[cls]["num_of_samples"] + c) / (total_num_of_reviews + c * num_classes))
         for word in review:
             # log(theta_word_cls)
             probs[cls] += np.log10((data[cls]["words"][word] + c) / (data[cls]["num_of_words"] + c * V))
-
-    print(probs)
 
     keys = list(probs.keys())
     max_cls = keys[0]
