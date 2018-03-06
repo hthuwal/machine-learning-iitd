@@ -19,7 +19,7 @@ def clean(string):
 
 
 def read_data(review_file, rating_file):
-    print("Reading Files %s %s\n" % (review_file, rating_file))
+    print("Reading Files \'%s\' and \'%s\'\n" % (review_file, rating_file))
     data = []
     with open(review_file, 'r') as rev, open(rating_file, 'r') as rt:
         for review, rating in zip(rev, rt):
@@ -97,9 +97,8 @@ def run(dataset, method='naive_bayes'):
 
 
 def random_prediction():
-    classes = list(data.keys())
-    i = random.randint(0, 7)
-    return classes[i]
+    i = random.randint(1, 10)
+    return i
 
 
 if len(sys.argv) == 2 and sys.argv[1] == "stemmed":
