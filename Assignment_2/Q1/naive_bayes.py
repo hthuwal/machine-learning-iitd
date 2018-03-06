@@ -4,6 +4,7 @@
 # Every position has same multinomial theta1 to theta|V|
 
 import math
+import numpy as np
 import re
 import sys
 import random
@@ -76,19 +77,30 @@ def predict(review, c):
     return max_cls
 
 
-def run(dataset, method='naive_bayes'):
+def run(dataset, method='naive_bayes', confusion=False):
     count = 0
     num_samples = len(dataset)
     correct_prediction = 0
+
     for actual_cls, review in tqdm(dataset):
         count += 1
         # print(count)
         if method == "naive_bayes":
-            if actual_cls == predict(review, 1):
+            prediction = predict(review, 1)
+            if actual_cls == prediction:
                 correct_prediction += 1
+
+            if confusion:
+                if prediction > 4:
+                    prediction -= 2
+                if actual_cls > 4:
+                    actual_cls -= 2
+                cf_mat[actual_cls-1][prediction-1] += 1
+
         elif method == "random":
             if actual_cls == random_prediction():
                 correct_prediction += 1
+
         elif method == "maxcls":
             if actual_cls == maxcls:
                 correct_prediction += 1
@@ -122,12 +134,15 @@ thetas = {}
 for word in vocab:
     thetas[word] = dict(phis)
 
+cf_mat = np.zeros([8, 8]) # confusion_matrix
+
 print("Running on Training data")
 train_accuracy = run(training_data)
 print("Training Accuracy: %f\n" % (train_accuracy))
 
+
 print("Running on Testing data")
-test_accuracy = run(testing_data)
+test_accuracy = run(testing_data, confusion=True)
 print("Test Accuracy: %f\n" % (test_accuracy))
 
 
@@ -143,3 +158,6 @@ for cls in data:
 
 test_accuracy = run(testing_data, method="maxcls")
 print("Accuracy: %f\n" % (test_accuracy))
+
+# Confusion Matrix
+print(cf_mat)
