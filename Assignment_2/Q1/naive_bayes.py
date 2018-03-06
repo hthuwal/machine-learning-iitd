@@ -3,7 +3,7 @@
 # y is Multinomial phi1 to phi10
 # Every position has same multinomial theta1 to theta|V|
 
-import numpy as np
+import math
 import re
 import sys
 from collections import Counter
@@ -52,17 +52,18 @@ def get_vocab(data):
 
 
 def predict(review, c):
-    probs = np.zeros([num_classes, ])
+    probs = [0 for i in range(0, num_classes)]
+    # probs = np.zeros([num_classes, ])
     classes = list(data.keys())
 
     probs = dict(zip(classes, probs))
 
     for cls in probs:
         # log(phi_cls)
-        probs[cls] += np.log10((data[cls]["num_of_samples"] + c) / (total_num_of_samples + c * num_classes))
+        probs[cls] += math.log10((data[cls]["num_of_samples"] + c) / (total_num_of_samples + c * num_classes))
         for word in review:
             # log(theta_word_cls)
-            probs[cls] += np.log10((data[cls]["words"][word] + c) / (data[cls]["num_of_words"] + c * V))
+            probs[cls] += math.log10((data[cls]["words"][word] + c) / (data[cls]["num_of_words"] + c * V))
 
     keys = list(probs.keys())
     max_cls = keys[0]
@@ -103,7 +104,7 @@ for rating in data:
     total_num_of_samples += data[rating]["num_of_samples"]
 
 
-phis = dict(zip(data.keys(), np.zeros([num_classes, ])))
+phis = dict(zip(data.keys(), [0 for i in range(0, num_classes)]))
 thetas = {}
 for word in vocab:
     thetas[word] = dict(phis)
