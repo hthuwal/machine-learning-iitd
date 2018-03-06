@@ -3,7 +3,9 @@
 # y is Multinomial phi1 to phi10
 # Every position has same multinomial theta1 to theta|V|
 
+import itertools
 import math
+import matplotlib.pyplot as plt
 import numpy as np
 import re
 import sys
@@ -95,7 +97,7 @@ def run(dataset, method='naive_bayes', confusion=False):
                     prediction -= 2
                 if actual_cls > 4:
                     actual_cls -= 2
-                cf_mat[actual_cls-1][prediction-1] += 1
+                cf_mat[actual_cls - 1][prediction - 1] += 1
 
         elif method == "random":
             if actual_cls == random_prediction():
@@ -112,6 +114,26 @@ def random_prediction():
     classes = list(data.keys())
     i = random.randint(0, 7)
     return classes[i]
+
+
+def plot_confusion_matrix(cm, classes, title='Confusion matrix', cmap=plt.cm.Blues):
+    print(cm)
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(len(classes))
+    plt.xticks(tick_marks, classes, rotation=45)
+    plt.yticks(tick_marks, classes)
+
+    thresh = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        plt.text(j, i, format(cm[i, j], '0.2f'),
+                 horizontalalignment="center",
+                 color="white" if cm[i, j] > thresh else "black")
+
+    plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
 
 
 if len(sys.argv) == 2 and sys.argv[1] == "stemmed":
@@ -135,7 +157,7 @@ thetas = {}
 for word in vocab:
     thetas[word] = dict(phis)
 
-cf_mat = np.zeros([8, 8]) # confusion_matrix
+cf_mat = np.zeros([8, 8])  # confusion_matrix
 
 print("Running on Training data")
 train_accuracy = run(training_data)
@@ -161,4 +183,8 @@ test_accuracy = run(testing_data, method="maxcls")
 print("Accuracy: %f\n" % (test_accuracy))
 
 # Confusion Matrix
-print(cf_mat)
+classes = list(data.keys())
+classes.sort()
+plt.figure()
+plot_confusion_matrix(cf_mat, classes=classes, title='Confusion matrix')  # , cmap=plt.cm.viridis_r)
+plt.show()
