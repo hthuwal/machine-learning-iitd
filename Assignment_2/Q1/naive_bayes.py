@@ -109,8 +109,9 @@ def run(dataset, method='naive_bayes', confusion=False):
 
 
 def random_prediction():
-    i = random.randint(1, 10)
-    return i
+    classes = list(data.keys())
+    i = random.randint(0, 7)
+    return classes[i]
 
 
 if len(sys.argv) == 2 and sys.argv[1] == "stemmed":
