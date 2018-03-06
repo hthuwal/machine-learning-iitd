@@ -6,6 +6,7 @@
 import math
 import re
 import sys
+import random
 from collections import Counter
 from tqdm import tqdm
 # TODO code should work even if tqdm is absent
@@ -75,17 +76,30 @@ def predict(review, c):
     return max_cls
 
 
-def run(dataset):
+def run(dataset, method='naive_bayes'):
     count = 0
     num_samples = len(dataset)
     correct_prediction = 0
     for actual_cls, review in tqdm(dataset):
         count += 1
         # print(count)
-        if(actual_cls == predict(review, 1)):
-            correct_prediction += 1
+        if method == "naive_bayes":
+            if actual_cls == predict(review, 1):
+                correct_prediction += 1
+        elif method == "random":
+            if actual_cls == random_prediction():
+                correct_prediction += 1
+        elif method == "maxcls":
+            if actual_cls == maxcls:
+                correct_prediction += 1
 
     return (correct_prediction / num_samples) * 100
+
+
+def random_prediction():
+    classes = list(data.keys())
+    i = random.randint(0, 7)
+    return classes[i]
 
 
 if len(sys.argv) == 2 and sys.argv[1] == "stemmed":
@@ -116,3 +130,17 @@ print("Training Accuracy: %f\n" % (train_accuracy))
 print("Running on Testing data")
 test_accuracy = run(testing_data)
 print("Test Accuracy: %f\n" % (test_accuracy))
+
+
+print("Random Prediction on Test Set")
+test_accuracy = run(testing_data, method="random")
+print("Accuracy: %f\n" % (test_accuracy))
+
+print("Majority Prediction on Test Set")
+maxcls = list(data.keys())[0]
+for cls in data:
+    if data[cls]["num_of_samples"] > data[maxcls]["num_of_samples"]:
+        maxcls = cls
+
+test_accuracy = run(testing_data, method="maxcls")
+print("Accuracy: %f\n" % (test_accuracy))
