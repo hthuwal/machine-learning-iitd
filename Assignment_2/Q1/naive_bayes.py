@@ -55,6 +55,10 @@ def get_vocab(data):
     return v
 
 
+phis = {}
+thetas = {}
+
+
 def predict(review, c):
     probs = [0 for i in range(0, num_classes)]
     # probs = np.zeros([num_classes, ])
@@ -64,10 +68,17 @@ def predict(review, c):
 
     for cls in probs:
         # log(phi_cls)
-        probs[cls] += math.log10((data[cls]["num_of_samples"] + c) / (total_num_of_samples + c * num_classes))
+        if cls not in phis:
+            phis[cls] = math.log10((data[cls]["num_of_samples"] + c) / (total_num_of_samples + c * num_classes))
+        probs[cls] += phis[cls]
+
+        if cls not in thetas:
+            thetas[cls] = {}
         for word in review:
             # log(theta_word_cls)
-            probs[cls] += math.log10((data[cls]["words"][word] + c) / (data[cls]["num_of_words"] + c * V))
+            if word not in thetas[cls]:
+                thetas[cls][word] = math.log10((data[cls]["words"][word] + c) / (data[cls]["num_of_words"] + c * V))
+            probs[cls] += thetas[cls][word]
 
     keys = list(probs.keys())
     max_cls = keys[0]
@@ -150,12 +161,6 @@ V = len(vocab)
 total_num_of_samples = 0
 for rating in data:
     total_num_of_samples += data[rating]["num_of_samples"]
-
-
-phis = dict(zip(data.keys(), [0 for i in range(0, num_classes)]))
-thetas = {}
-for word in vocab:
-    thetas[word] = dict(phis)
 
 cf_mat = np.zeros([8, 8])  # confusion_matrix
 
