@@ -1,9 +1,6 @@
 import sys
 import numpy as np
-import pandas as pd
 import random
-import itertools
-
 
 def bgd_pegasos(x, y, threshold, c=0, batch_size=100, max_iter=5000):
     if c == 0:
