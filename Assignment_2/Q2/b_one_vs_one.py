@@ -46,4 +46,9 @@ else:
     with open("model.pickle", "rb") as f:
         wandbs = pickle.load(f)
 
-print(wandbs[2][1])
+
+def hypothesis(w, b, x):
+    if (w@x + b) >= 0:
+        return 1
+    return -1
+
