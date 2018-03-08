@@ -2,6 +2,7 @@ from a_pegasos import bgd_pegasos
 import numpy as np
 import pandas as pd
 import pickle
+from tqdm import tqdm
 import os
 
 
@@ -14,7 +15,6 @@ def read_data(file):
 
 
 x_train, y_train = read_data("../mnist/train.csv")
-# x_test, y_test = read_data("../mnist/test.csv")
 
 num_classes = len(set(y_train))
 
@@ -66,6 +66,15 @@ def predict(model, x):
     return np.argmax(counts)
 
 
+def run(x_set, y_set, model):
+    correct = 0
+    for x, y in tqdm(zip(x_test, y_test)):
+        if predict(model, x) == y:
+            correct += 1
+
+    accuracy = correct / (x_test.shape[0])
+    print("Accuracy: %f\n" % (accuracy))
 
 
-
+x_test, y_test = read_data("../mnist/test.csv")
+run(x_test, y_test, wandbs)
