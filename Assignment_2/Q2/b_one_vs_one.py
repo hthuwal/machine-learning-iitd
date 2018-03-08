@@ -69,11 +69,11 @@ def predict(model, x):
 
 def run(x_set, y_set, model):
     correct = 0
-    for x, y in tqdm(zip(x_test, y_test)):
+    for x, y in tqdm(zip(x_set, y_set)):
         if predict(model, x) == y:
             correct += 1
 
-    accuracy = correct / (x_test.shape[0])
+    accuracy = correct / (x_set.shape[0])
     print("Accuracy: %f\n" % (accuracy))
 
 
