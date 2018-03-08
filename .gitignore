@@ -121,3 +121,8 @@ ENV/
 /Assignment_2/imdb/
 
 /man/
+
+*.txt
+*.png
+*.model
+/Assignment_2/mnist/
