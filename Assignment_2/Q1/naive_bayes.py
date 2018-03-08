@@ -12,6 +12,7 @@ import sys
 import random
 from collections import Counter
 from tqdm import tqdm
+import pickle
 # TODO code should work even if tqdm is absent
 
 
@@ -150,9 +151,11 @@ def plot_confusion_matrix(cm, classes, title='Confusion matrix', cmap=plt.cm.Blu
 if len(sys.argv) == 2 and sys.argv[1] == "stemmed":
     training_data = read_data("../imdb/imdb_train_text_stemmed.txt", "../imdb/imdb_train_labels.txt")
     testing_data = read_data("../imdb/imdb_test_text_stemmed.txt", "../imdb/imdb_test_labels.txt")
+    output_file = "naive_bayes_stemmed.model"
 else:
     training_data = read_data("../imdb/imdb_train_text.txt", "../imdb/imdb_train_labels.txt")
     testing_data = read_data("../imdb/imdb_test_text.txt", "../imdb/imdb_test_labels.txt")
+    output_file = "naive_bayes.model"
 
 data = format_data(training_data)
 num_classes = len(data)
@@ -193,3 +196,8 @@ classes.sort()
 plt.figure()
 plot_confusion_matrix(cf_mat, classes=classes, title='Confusion matrix')  # , cmap=plt.cm.viridis_r)
 plt.show()
+
+with open(output_file, "wb") as f:
+    for cls in data:
+        del data[cls]["words"]
+    pickle.dump((phis, thetas, V, data), f)
