@@ -4,9 +4,11 @@ import pandas as pd
 import pickle
 from tqdm import tqdm
 import os
+import sys
 
 
 def read_data(file):
+    print("Reading %s" % (file))
     x = pd.read_csv(file, header=None)
     y = np.array(x[[784]]).flatten()
     x = x.drop(columns=[784])
@@ -14,14 +16,11 @@ def read_data(file):
     return x, y
 
 
-x_train, y_train = read_data("../mnist/train.csv")
-
-num_classes = len(set(y_train))
-
-# training each classifier
 retrain = False
 wandbs = None
 if retrain:
+    x_train, y_train = read_data("../mnist/train.csv")
+    num_classes = len(set(y_train))
     wandbs = [[() for j in range(num_classes)] for i in range(num_classes)]
     count = 0
     for i in range(num_classes):
@@ -67,19 +66,21 @@ def predict(model, x):
     return np.argmax(counts)
 
 
-def run(x_set, y_set, model):
+def run(x_set, y_set, model, output_file):
     correct = 0
-    for x, y in tqdm(zip(x_set, y_set)):
-        if predict(model, x) == y:
-            correct += 1
+    with open(output_file, "w") as f:
+        for x, y in tqdm(zip(x_set, y_set)):
+            prediction = predict(model, x)
+            f.write("%d\n" % (prediction))
+            if prediction == y:
+                correct += 1
 
-    accuracy = correct / (x_set.shape[0])
-    print("Accuracy: %f\n" % (accuracy))
+        accuracy = correct / (x_set.shape[0])
+        print("Accuracy: %f\n" % (accuracy))
 
 
-x_test, y_test = read_data("../mnist/test.csv")
-print("\nRunning on train data")
-run(x_train, y_train, wandbs)
+input_file = sys.argv[1].strip()
+output_file = sys.argv[2].strip()
+x_set, y_set = read_data(input_file)
+run(x_set, y_set, wandbs, output_file)
 
-print("\nRunning on test data")
-run(x_test, y_test, wandbs)
