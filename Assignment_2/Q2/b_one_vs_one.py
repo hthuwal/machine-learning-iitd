@@ -38,12 +38,12 @@ if retrain:
                         yc.append(-1)
 
                 wandbs[i][j] = bgd_pegasos(xc, yc, 10e-4, c=1.0)
-    with open("model.pickle", "wb") as f:
+    with open("pegasos_model.pickle", "wb") as f:
         pickle.dump(wandbs, f)
 
 else:
     print("\nLoading Model")
-    with open("model.pickle", "rb") as f:
+    with open("pegasos_model.pickle", "rb") as f:
         wandbs = pickle.load(f)
 
 
@@ -83,4 +83,3 @@ input_file = sys.argv[1].strip()
 output_file = sys.argv[2].strip()
 x_set, y_set = read_data(input_file)
 run(x_set, y_set, wandbs, output_file)
-
