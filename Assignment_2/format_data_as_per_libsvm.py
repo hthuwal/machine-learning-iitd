@@ -11,16 +11,17 @@ def read_data(file):
     return x, y
 
 
-def format(file):
+def format(file, formated_file):
 	X, Y = read_data(file)
 	basename, ext = os.path.splitext(file)
-	with open(basename+"libsvm"+ext, "w") as f:
+	with open(formated_file, "w") as f:
 		for x, y in zip(X,Y):
 			x = ["%d:%d" %(i+1, x[i]) for i in range(0, len(x))]
 			x = " ".join(x)
 			f.write("%d %s\n" %(y, x))
 
-print("Formatting train file for libsvm")
-format("mnist/train.csv")
-print("Formatting test file for libsvm")
-format("mnist/test.csv")
+file = sys.argv[1].strip()
+output_file = sys.argv[2].strip()
+
+print("Formatting %s in to format of libsvm" %file) 
+format(file, output_file)
