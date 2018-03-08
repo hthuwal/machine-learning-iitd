@@ -52,3 +52,20 @@ def hypothesis(w, b, x):
         return 1
     return -1
 
+
+def predict(model, x):
+    num_classes = len(model)
+    counts = [0 for i in range(num_classes)]
+    for i in range(num_classes):
+        for j in range(num_classes):
+            if(i < j):
+                if hypothesis(model[i][j][0], model[i][j][1], x) == 1:
+                    counts[i] += 1
+                else:
+                    counts[j] += 1
+    return np.argmax(counts)
+
+
+
+
+
