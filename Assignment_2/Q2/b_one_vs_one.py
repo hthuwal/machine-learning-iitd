@@ -28,7 +28,7 @@ if retrain:
         for j in range(num_classes):
             if(i < j):
                 count += 1
-                print("\nClassifier %d: %d -> 1, %d -> -1\n" % (count, i, j))
+                print("\nClassifier %d: %d vs %d\n" % (count, i, j))
                 xc, yc = [], []
                 for x, y in zip(x_train, y_train):
                     if (y == i):
@@ -38,11 +38,12 @@ if retrain:
                         xc.append(x)
                         yc.append(-1)
 
-                wandbs[i][j] = bgd_pegasos(xc, yc, 10e-5)
+                wandbs[i][j] = bgd_pegasos(xc, yc, 10e-4, c=1.0)
     with open("model.pickle", "wb") as f:
         pickle.dump(wandbs, f)
 
 else:
+    print("\nLoading Model")
     with open("model.pickle", "rb") as f:
         wandbs = pickle.load(f)
 
@@ -77,4 +78,8 @@ def run(x_set, y_set, model):
 
 
 x_test, y_test = read_data("../mnist/test.csv")
+print("\nRunning on train data")
+run(x_train, y_train, wandbs)
+
+print("\nRunning on test data")
 run(x_test, y_test, wandbs)
