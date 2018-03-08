@@ -73,11 +73,11 @@ model = None
 dataset = None
 if sys.argv[1] == "1":
     print("Loading Model naive_bayes.model\n")
-    model = pickle.load(open("naive_bayes.model", "rb"))
+    model = pickle.load(open("models/naive_bayes.model", "rb"))
     dataset = read_data(sys.argv[2].strip())
 elif sys.argv[1] == "2":
     print("Loading Model naive_bayes_stemmed.model\n")
-    model = pickle.load(open("naive_bayes_stemmed.model", "rb"))
+    model = pickle.load(open("models/naive_bayes_stemmed.model", "rb"))
     dataset = read_data(sys.argv[2].strip())
 # elif sys.arrgv[1] == "3":
 

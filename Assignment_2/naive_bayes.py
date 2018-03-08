@@ -149,13 +149,13 @@ def plot_confusion_matrix(cm, classes, title='Confusion matrix', cmap=plt.cm.Blu
 
 
 if len(sys.argv) == 2 and sys.argv[1] == "stemmed":
-    training_data = read_data("../imdb/imdb_train_text_stemmed.txt", "../imdb/imdb_train_labels.txt")
-    testing_data = read_data("../imdb/imdb_test_text_stemmed.txt", "../imdb/imdb_test_labels.txt")
-    output_file = "naive_bayes_stemmed.model"
+    training_data = read_data("imdb/imdb_train_text_stemmed.txt", "imdb/imdb_train_labels.txt")
+    testing_data = read_data("imdb/imdb_test_text_stemmed.txt", "imdb/imdb_test_labels.txt")
+    output_file = "models/naive_bayes_stemmed.model"
 else:
-    training_data = read_data("../imdb/imdb_train_text.txt", "../imdb/imdb_train_labels.txt")
-    testing_data = read_data("../imdb/imdb_test_text.txt", "../imdb/imdb_test_labels.txt")
-    output_file = "naive_bayes.model"
+    training_data = read_data("imdb/imdb_train_text.txt", "imdb/imdb_train_labels.txt")
+    testing_data = read_data("imdb/imdb_test_text.txt", "imdb/imdb_test_labels.txt")
+    output_file = "models/naive_bayes.model"
 
 data = format_data(training_data)
 num_classes = len(data)

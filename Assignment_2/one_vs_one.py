@@ -1,4 +1,4 @@
-from a_pegasos import bgd_pegasos
+from pegasos import bgd_pegasos
 import numpy as np
 import pandas as pd
 import pickle
@@ -19,7 +19,7 @@ def read_data(file):
 retrain = False
 wandbs = None
 if retrain:
-    x_train, y_train = read_data("../mnist/train.csv")
+    x_train, y_train = read_data("mnist/train.csv")
     num_classes = len(set(y_train))
     wandbs = [[() for j in range(num_classes)] for i in range(num_classes)]
     count = 0
@@ -38,12 +38,12 @@ if retrain:
                         yc.append(-1)
 
                 wandbs[i][j] = bgd_pegasos(xc, yc, 10e-4, c=1.0)
-    with open("pegasos_model.pickle", "wb") as f:
+    with open("models/pegasos.model", "wb") as f:
         pickle.dump(wandbs, f)
 
 else:
     print("\nLoading Model")
-    with open("pegasos_model.pickle", "rb") as f:
+    with open("models/pegasos.model", "rb") as f:
         wandbs = pickle.load(f)
 
 

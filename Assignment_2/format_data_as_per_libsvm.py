@@ -21,6 +21,6 @@ def format(file):
 			f.write("%d %s\n" %(y, x))
 
 print("Formatting train file for libsvm")
-format("../mnist/train.csv")
+format("mnist/train.csv")
 print("Formatting test file for libsvm")
-format("../mnist/test.csv")
+format("mnist/test.csv")
