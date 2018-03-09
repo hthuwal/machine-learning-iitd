@@ -18,6 +18,26 @@ def read_data(file):
     return x, y
 
 
+def read_data_svm(file):
+    x = []
+    y = []
+    with open(file, "r") as f:
+        for line in f:
+            temp = [0 for i in range(784)]
+            line = line.strip().split(" ")
+            y.append(int(line[0].strip()))
+            line = line[1:]
+            for each in line:
+                each = each.split(":")
+                temp[int(each[0].strip()) - 1] = np.float64(each[1].strip())
+
+            x.append(temp)
+            # input()
+    x = np.array(x)
+    y = np.array(y)
+    # print(y.shape)
+    return x, y
+
 
 retrain = False
 wandbs = None
