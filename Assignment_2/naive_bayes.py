@@ -59,6 +59,16 @@ def get_vocab(data):
 phis = {}
 thetas = {}
 
+notlist = {
+    1:3,
+    2:4,
+    3:7,
+    4:7,
+    7:2,
+    8:1,
+    9:1,
+    10:1
+}
 
 def predict(review, c):
     probs = [0 for i in range(0, num_classes)]
@@ -75,11 +85,14 @@ def predict(review, c):
 
         if cls not in thetas:
             thetas[cls] = {}
-        for word in review:
+        for i, word in enumerate(review):
             # log(theta_word_cls)
             if word not in thetas[cls]:
                 thetas[cls][word] = math.log10((data[cls]["words"][word] + c) / (data[cls]["num_of_words"] + c * V))
-            probs[cls] += thetas[cls][word]
+            if (i>=1 and review[i-1] in ["not", "never", "nope"]) or (i>=2 and review[i-2] in ["not", "never", "nope"]):
+                probs[cls] -= (thetas[cls][word])
+            else:
+                probs[cls] += thetas[cls][word]
 
     keys = list(probs.keys())
     max_cls = keys[0]
