@@ -27,15 +27,23 @@ elif [ $1 -eq 2 ]
 		else
 			echo "The path $3 does not exist"
 		fi
-	elif [ $2 -eq 2 ] 
+	elif [ $2 -eq 2 ] || [ $2 -eq 3 ]
 		then
+		
+		if [ $2 -eq 2 ]
+		then
+			model="models/libsvm_linear_scaled.model"
+		else
+			model="models/libsvm_best_rbf.model"
+		fi
+		
 		if [ -f $3 ] 
 			then
 			python "format_data_as_per_libsvm.py" $3 "temp_libsvm.csv"
 			echo "Scaling the input"
 			./svm-scale -l 0 -u 1 "temp_libsvm.csv" > "temp2_libsvm.csv"
 			echo "Predicting"
-			./svm-predict "temp2_libsvm.csv" "models/libsvm_linear_scaled.model" $4
+			./svm-predict -q "temp2_libsvm.csv" "$model" $4
 			echo "Cleaning up..."
 			rm "temp_libsvm.csv"
 			rm "temp2_libsvm.csv"
