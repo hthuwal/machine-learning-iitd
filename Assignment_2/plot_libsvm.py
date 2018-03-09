@@ -3,6 +3,7 @@ import itertools
 import sys
 import numpy as np
 
+
 def plot_crossvalidation():
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
@@ -16,6 +17,7 @@ def plot_crossvalidation():
     plt.ylabel("Accuracy")
     ax.legend()
     plt.show()
+
 
 def plot_confusion_matrix(cm, classes, title='Confusion matrix', cmap=plt.cm.Blues):
     fig = plt.figure()
@@ -63,4 +65,15 @@ cf_mat = np.zeros([10, 10])
 y_gold, y_pred = get_y(sys.argv[1].strip(), sys.argv[2].strip())
 plot_confusion_matrix(cf_mat, [i for i in range(10)])
 
+sum_ro = np.sum(cf_mat, axis=1)
+sum_col = np.sum(cf_mat, axis=0)
 
+precision = []
+recall = []
+
+for i in range(10):
+    precision.append(cf_mat[i][i] / sum_col[i])
+    recall.append(cf_mat[i][i] / sum_ro[i])
+
+print("Precision: %s", precision)
+print("Recall: %s", recall)
