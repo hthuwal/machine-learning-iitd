@@ -8,12 +8,15 @@ import sys
 
 
 def read_data(file):
-    print("Reading %s" % (file))
     x = pd.read_csv(file, header=None)
-    y = np.array(x[[784]]).flatten()
-    x = x.drop(columns=[784])
+    if x.shape[1] > 784:
+        y = np.array(x[[784]]).flatten()
+        x = x.drop(columns=[784])
+    else:
+        y = np.zeros(x.shape[0])
     x = x.as_matrix()
     return x, y
+
 
 
 retrain = False
@@ -78,8 +81,13 @@ def run(x_set, y_set, model, output_file):
         accuracy = correct / (x_set.shape[0])
         print("Accuracy: %f\n" % (accuracy))
 
+def run2(x_set, y_set, model, output_file):
+    with open(output_file, "w") as f:
+        for x, y in tqdm(zip(x_set, y_set)):
+            prediction = predict(model, x)
+            f.write("%d\n" % (prediction))
 
 input_file = sys.argv[1].strip()
 output_file = sys.argv[2].strip()
 x_set, y_set = read_data(input_file)
-run(x_set, y_set, wandbs, output_file)
+run2(x_set, y_set, wandbs, output_file)
