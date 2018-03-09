@@ -70,7 +70,7 @@ notlist = {
     10: 1
 }
 
-negations = ["neiter", "nor", "nothing", "didnt", "not", "never", "nope", "none", "no", "nobody", "noway", "nah"]
+negations = ["neiter", "nor", "nothing", "didnt", "not", "never", "nope", "none", "no", "nobody", "noway", "nah", "aint"]
 
 
 def predict(review, c):
@@ -92,8 +92,10 @@ def predict(review, c):
             # log(theta_word_cls)
             if word not in thetas[cls]:
                 thetas[cls][word] = math.log10((data[cls]["words"][word] + c) / (data[cls]["num_of_words"] + c * V))
-            if (i>=1 and review[i-1] in negations) or (i>=2 and review[i-2] in negations):
+            if (i >= 1 and review[i - 1] in negations) or (i >= 2 and review[i - 2] in negations):
                 probs[cls] -= (thetas[cls][word])
+            elif (i==0):
+                probs[cls] += 2*thetas[cls][word]
             else:
                 probs[cls] += thetas[cls][word]
 

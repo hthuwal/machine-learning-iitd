@@ -123,6 +123,5 @@ ENV/
 /man/
 
 *.txt
-*.png
 *.model
 /Assignment_2/mnist/
