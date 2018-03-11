@@ -17,9 +17,10 @@ import pickle
 
 
 def clean(string):
-    string = string.lower().strip()
-    string = re.sub("[^a-z0-9]", " ", string)  # removing all accept letters and numbers
-    return string.split()
+    string = string.strip()
+    string1 = re.sub("[^a-z0-9]", " ", string)  # removing all accept letters and numbers
+    string2 = re.sub("[^a-z0-9]", "", string)  # removing all accept letters and numbers
+    return list(set(string1.split() + string2.split()))
 
 
 def read_data(review_file, rating_file):
@@ -88,14 +89,17 @@ def predict(review, c):
 
         if cls not in thetas:
             thetas[cls] = {}
-        for i, word in enumerate(review):
+        review.sort()
+
+        for i in range(len(review)):
+            word = review[i]
             # log(theta_word_cls)
             if word not in thetas[cls]:
                 thetas[cls][word] = math.log10((data[cls]["words"][word] + c) / (data[cls]["num_of_words"] + c * V))
-            if (i >= 1 and review[i - 1] in negations) or (i >= 2 and review[i - 2] in negations):
+            if (i == 0 or i == 1 or i == 2):
+                probs[cls] += 2 * thetas[cls][word]
+            elif (i >= 1 and review[i - 1] in negations) or (i >= 2 and review[i - 2] in negations):
                 probs[cls] -= (thetas[cls][word])
-            elif (i==0):
-                probs[cls] += 2*thetas[cls][word]
             else:
                 probs[cls] += thetas[cls][word]
 
@@ -169,11 +173,11 @@ def plot_confusion_matrix(cm, classes, title='Confusion matrix', cmap=plt.cm.Blu
 if len(sys.argv) == 2 and sys.argv[1] == "stemmed":
     training_data = read_data("imdb/imdb_train_text_stemmed.txt", "imdb/imdb_train_labels.txt")
     testing_data = read_data("imdb/imdb_test_text_stemmed.txt", "imdb/imdb_test_labels.txt")
-    output_file = "models/naive_bayes_stemmed.model"
+    output_file = "models/naive_bayes_stemmed_e.model"
 else:
     training_data = read_data("imdb/imdb_train_text.txt", "imdb/imdb_train_labels.txt")
     testing_data = read_data("imdb/imdb_test_text.txt", "imdb/imdb_test_labels.txt")
-    output_file = "models/naive_bayes.model"
+    output_file = "models/naive_bayes_e.model"
 
 data = format_data(training_data)
 num_classes = len(data)
