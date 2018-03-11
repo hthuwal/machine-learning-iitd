@@ -71,9 +71,9 @@ else:
 
 
 def hypothesis(w, b, x):
-    if (w@x + b) >= 0:
-        return 1
-    return -1
+    if (w@x + b) <= 0:
+        return -1
+    return 1
 
 
 def predict(model, x):
@@ -101,11 +101,13 @@ def run(x_set, y_set, model, output_file):
         accuracy = correct / (x_set.shape[0])
         print("Accuracy: %f\n" % (accuracy))
 
+
 def run2(x_set, y_set, model, output_file):
     with open(output_file, "w") as f:
         for x, y in tqdm(zip(x_set, y_set)):
             prediction = predict(model, x)
             f.write("%d\n" % (prediction))
+
 
 input_file = sys.argv[1].strip()
 output_file = sys.argv[2].strip()
