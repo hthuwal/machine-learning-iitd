@@ -1,8 +1,8 @@
 from pegasos import bgd_pegasos
+
 import numpy as np
 import pandas as pd
 import pickle
-import os
 import sys
 
 
@@ -105,12 +105,13 @@ def run2(x_set, y_set, model, output_file):
     with open(output_file, "w") as f:
         length = len(x_set)
         for i in range(length):
-            sys.stdout.write("\r\x1b[K" +"%d/%d : %0.2f percent" % (i+1, length, (i+1)*100/length))
+            sys.stdout.write("\r\x1b[K" + "%d/%d : %0.2f percent" % (i + 1, length, (i + 1) * 100 / length))
             sys.stdout.flush()
             x, y = x_set[i], y_set[i]
             prediction = predict(model, x)
             f.write("%d\n" % (prediction))
     print("\n")
+
 
 input_file = sys.argv[1].strip()
 output_file = sys.argv[2].strip()

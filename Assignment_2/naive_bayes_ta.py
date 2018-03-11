@@ -3,14 +3,10 @@
 # y is Multinomial phi1 to phi10
 # Every position has same multinomial theta1 to theta|V|
 
-import itertools
 import math
-import matplotlib.pyplot as plt
-import numpy as np
+import pickle
 import re
 import sys
-import random
-import pickle
 
 
 def clean(string):
@@ -103,7 +99,7 @@ def run(dataset, V, data, output_file, e=False):
     with open(output_file, "w") as f:
         length = len(dataset)
         for i in range(length):
-            sys.stdout.write("\r\x1b[K" +"%d/%d : %0.2f percent" % (i+1, length, (i+1)*100/length))
+            sys.stdout.write("\r\x1b[K" + "%d/%d : %0.2f percent" % (i + 1, length, (i + 1) * 100 / length))
             sys.stdout.flush()
             review = dataset[i]
             if e:
@@ -112,6 +108,7 @@ def run(dataset, V, data, output_file, e=False):
                 prediction = predict(review, 1, V, data)
             f.write("%d\n" % prediction)
     print(" ")
+
 
 model = None
 dataset = None
