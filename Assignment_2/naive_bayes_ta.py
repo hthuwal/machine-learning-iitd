@@ -10,10 +10,7 @@ import numpy as np
 import re
 import sys
 import random
-from collections import Counter
-from tqdm import tqdm
 import pickle
-# TODO code should work even if tqdm is absent
 
 
 def clean(string):
@@ -104,13 +101,17 @@ def run(dataset, V, data, output_file, e=False):
     correct_prediction = 0
 
     with open(output_file, "w") as f:
-        for review in tqdm(dataset):
+        length = len(dataset)
+        for i in range(length):
+            sys.stdout.write("\r\x1b[K" +"%d/%d : %0.2f percent" % (i+1, length, (i+1)*100/length))
+            sys.stdout.flush()
+            review = dataset[i]
             if e:
                 prediction = predict2(review, 1, V, data)
             else:
                 prediction = predict(review, 1, V, data)
             f.write("%d\n" % prediction)
-
+    print(" ")
 
 model = None
 dataset = None
@@ -132,6 +133,8 @@ thetas = model[1]
 V = model[2]
 data = model[3]
 if sys.argv[1] == "3":
+    print("Predicting\n")
     run(dataset, V, data, sys.argv[3].strip(), e=True)
 else:
+    print("Predicting\n")
     run(dataset, V, data, sys.argv[3].strip())
