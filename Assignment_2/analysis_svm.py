@@ -20,6 +20,7 @@ with open(file_xy, "r") as gold, open(file_predicted_labels, "r") as predictions
             correct += 1
         else:
             print(y, p_y)
+            plt.title("Predictied label: %d\nCorrect Label: %d" %(p_y, y))
             plt.imshow(np.array(x).reshape(28, 28), cmap=cm.gray, vmin=0, vmax=255)
             plt.show()
 
