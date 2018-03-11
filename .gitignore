@@ -125,3 +125,5 @@ ENV/
 *.txt
 *.model
 /Assignment_2/mnist/
+
+/Assignment_2/models/
