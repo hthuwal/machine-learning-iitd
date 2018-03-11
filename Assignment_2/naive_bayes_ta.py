@@ -39,6 +39,7 @@ def predict(review, c, V, data):
     # probs = np.zeros([num_classes, ])
     probs = dict(zip(classes, probs))
 
+    review.sort()
     for cls in probs:
         # log(phi_cls)
         probs[cls] += phis[cls]
@@ -70,10 +71,10 @@ def predict2(review, c, V, data):
 
     probs = dict(zip(classes, probs))
 
+    review.sort()
     for cls in probs:
         # log(phi_cls)
         probs[cls] += phis[cls]
-        review.sort()
 
         for i in range(len(review)):
             word = review[i]
