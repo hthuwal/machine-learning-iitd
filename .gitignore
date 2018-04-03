@@ -127,3 +127,5 @@ ENV/
 /Assignment_2/mnist/
 
 /Assignment_2/models/
+
+/Assignment_3/dataset/*
