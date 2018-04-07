@@ -179,6 +179,38 @@ def accuracy(bfs_fast):
     return train_acc, valid_acc, test_acc
 
 
+def part_a():
+    fig = plt.figure()
+    train = []
+    test = []
+    valid = []
+    x = []
+
+    for i in tqdm(range(0, len(nodes), 10)):
+        bfs_fast = np.zeros(len(nodes))
+
+        for j in range(len(bfs_order[0:i])):
+            bfs_fast[bfs_order[j]] = 1
+
+        ta, va, tea = accuracy(bfs_fast)
+        train.append(ta)
+        valid.append(va)
+        test.append(tea)
+        x.append(i)
+
+        # fig.clf()
+        # my_plot(train, valid, test, x)
+        # plt.pause(0.001)
+        # print("\nTraining accuracy: %0.2f Validation accuracy: %0.2f Test accuracy: %0.2f" % (ta, va, tea))
+
+    fig.clf()
+    my_plot(train, valid, test, x)
+    plt.pause(0.01)
+    plt.show()
+
+
+# def part_b(graph):
+
 train_data = rd.preprocess("dataset/dtree_data/train.csv")
 train_labels = np.array(train_data[:, 0])
 train_data = np.delete(train_data, 0, 1)
@@ -198,31 +230,4 @@ for i in range(len(nodes)):
 
 print("\nTraining accuracy: %0.2f Validation accuracy: %0.2f Test accuracy: %0.2f" % accuracy(bfs_fast))
 
-fig = plt.figure()
-train = []
-test = []
-valid = []
-x = []
-
-for i in tqdm(range(0, len(nodes), 10)):
-    print(i)
-    bfs_fast = np.zeros(len(nodes))
-
-    for j in range(len(bfs_order[0:i])):
-        bfs_fast[bfs_order[j]] = 1
-
-    ta, va, tea = accuracy(bfs_fast)
-    train.append(ta)
-    valid.append(va)
-    test.append(tea)
-    x.append(i)
-
-    fig.clf()
-    my_plot(train, valid, test, x)
-    plt.pause(0.001)
-    print("\nTraining accuracy: %0.2f Validation accuracy: %0.2f Test accuracy: %0.2f" % (ta, va, tea))
-
-fig.clf()
-my_plot(train, valid, test, x)
-plt.pause(0.01)
-plt.show()
+part_a()
