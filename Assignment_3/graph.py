@@ -1,6 +1,5 @@
 import read_data as rd
 import numpy as np
-# import pdb
 from collections import Counter
 from sklearn.metrics import accuracy_score
 
@@ -106,6 +105,21 @@ def build_tree(data, labels, indices, attrib):
 ls = []
 
 
+def bfs(root):
+    ans = []
+    hc = []
+    ans.append(root)
+    hc.append(root)
+    while(len(hc) != 0):
+        front = hc[-1]
+        hc.pop()
+        if front in graph:
+            for key in graph[front]:
+                ans.append(graph[front][key])
+                hc.insert(0, graph[front][key])
+    return ans
+
+
 def dfs(root):
     ls.append(root)
     if root in graph:
@@ -125,9 +139,11 @@ def height(root):
     return ans + 1
 
 
-def predict(node_index, x):
+def predict(node_index, x, bfs_fast):
     node = nodes[node_index]
-    # print(node_index, node.sa)
+    if bfs_fast[node_index] == 0:
+        return node.majority
+
     if node.sa is None:
         return node.majority
 
@@ -135,20 +151,20 @@ def predict(node_index, x):
     if key not in graph[node.index]:
         return node.majority
 
-    return predict(graph[node.index][key], x)
+    return predict(graph[node.index][key], x, bfs_fast)
 
 
-def get_accuracy(data, labels):
+def get_accuracy(data, labels, bfs_fast):
     pred = []
     for i, x in enumerate(data):
-        pred.append(predict(0, x))
+        pred.append(predict(0, x, bfs_fast))
     return accuracy_score(labels, pred)
 
 
-def accuracy():
-    train_acc = get_accuracy(train_data, train_labels) * 100
-    valid_acc = get_accuracy(valid_data, valid_labels) * 100
-    test_acc = get_accuracy(test_data, test_labels) * 100
+def accuracy(bfs_fast):
+    train_acc = get_accuracy(train_data, train_labels, bfs_fast) * 100
+    valid_acc = get_accuracy(valid_data, valid_labels, bfs_fast) * 100
+    test_acc = get_accuracy(test_data, test_labels, bfs_fast) * 100
 
     return train_acc, valid_acc, test_acc
 
@@ -164,8 +180,18 @@ valid_labels = np.array(valid_data[:, 0])
 valid_data = np.delete(valid_data, 0, 1)
 
 
-# data = data[:10]
-# labels = labels[:10]
-
 build_tree(train_data, train_labels, [i for i in range(len(train_data))], list(attributes))
-print("\nTraining accuracy: %0.2f Validation accuracy: %0.2f Test accuracy: %0.2f" % accuracy())
+bfs_order = bfs(0)
+bfs_fast = np.zeros(len(nodes))
+for i in range(len(nodes)):
+    bfs_fast[bfs_order[i]] = 1
+
+print("\nTraining accuracy: %0.2f Validation accuracy: %0.2f Test accuracy: %0.2f" % accuracy(bfs_fast))
+
+for i in range(0, len(nodes)):
+    print(i)
+    bfs_fast = np.zeros(len(nodes))
+    for j in range(len(bfs_order[0:i])):
+        bfs_fast[bfs_order[j]] = 1
+    print("\nTraining accuracy: %0.2f Validation accuracy: %0.2f Test accuracy: %0.2f" % accuracy(bfs_fast))
+
