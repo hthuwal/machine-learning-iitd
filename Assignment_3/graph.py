@@ -179,8 +179,10 @@ def accuracy(bfs_fast):
     return train_acc, valid_acc, test_acc
 
 
+fig = plt.figure()
+
+
 def part_a():
-    fig = plt.figure()
     train = []
     test = []
     valid = []
