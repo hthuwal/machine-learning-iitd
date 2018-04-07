@@ -2,11 +2,21 @@ import read_data as rd
 import numpy as np
 from collections import Counter
 from sklearn.metrics import accuracy_score
+from tqdm import tqdm
+import matplotlib.pyplot as plt
 
 attributes = rd.attributes[1:]
 attributes = [(i, attr) for i, attr in enumerate(attributes)]
 nodes = []
 graph = {}
+
+
+def my_plot(train, valid, test, x):
+    a, = plt.plot(x, train, 'b', linestyle='solid')
+    b, = plt.plot(x, valid, 'g', linestyle='solid')
+    c, = plt.plot(x, test, 'r', linestyle='solid')
+    plt.legend([a, b, c], ["Training Accuracy: %0.2f" % train[-1], "Validation Accuracy: %0.2f" % valid[-1], "Test Accuracy: %0.2f" % test[-1]])
+    return fig
 
 
 class Node(object):
@@ -188,10 +198,31 @@ for i in range(len(nodes)):
 
 print("\nTraining accuracy: %0.2f Validation accuracy: %0.2f Test accuracy: %0.2f" % accuracy(bfs_fast))
 
-for i in range(0, len(nodes)):
+fig = plt.figure()
+train = []
+test = []
+valid = []
+x = []
+
+for i in tqdm(range(0, len(nodes), 10)):
     print(i)
     bfs_fast = np.zeros(len(nodes))
+
     for j in range(len(bfs_order[0:i])):
         bfs_fast[bfs_order[j]] = 1
-    print("\nTraining accuracy: %0.2f Validation accuracy: %0.2f Test accuracy: %0.2f" % accuracy(bfs_fast))
 
+    ta, va, tea = accuracy(bfs_fast)
+    train.append(ta)
+    valid.append(va)
+    test.append(tea)
+    x.append(i)
+
+    fig.clf()
+    my_plot(train, valid, test, x)
+    plt.pause(0.001)
+    print("\nTraining accuracy: %0.2f Validation accuracy: %0.2f Test accuracy: %0.2f" % (ta, va, tea))
+
+fig.clf()
+my_plot(train, valid, test, x)
+plt.pause(0.01)
+plt.show()
