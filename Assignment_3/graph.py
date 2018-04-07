@@ -1,151 +1,171 @@
 import read_data as rd
 import numpy as np
+# import pdb
 from collections import Counter
 from sklearn.metrics import accuracy_score
-from tqdm import tqdm
-graph = {}
+
+attributes = rd.attributes[1:]
+attributes = [(i, attr) for i, attr in enumerate(attributes)]
 nodes = []
+graph = {}
 
 
 class Node(object):
     def __init__(self, index):
         self.index = index
-        self.majority_cls = -1
-        self.split_attr = None
-        self.data_indices = None
+        self.majority = None
+        self.di = None
+        self.sa = None
+
+    def __repr__(self):
+        return str(self.index)
 
 
-def log2(x):
-    if x == 0:
-        return 0
-    else:
-        return np.log2(x)
+def entropy(labels):
+    labels = Counter(labels)
+    if (len(labels) == 2):  # only if two categories present
+        prob1 = labels[0] / (labels[0] + labels[1])
+        prob2 = labels[1] / (labels[0] + labels[1])
+        return -(prob1 * np.log2(prob1) + prob2 * np.log2(prob2))
+
+    return 0
 
 
-def entropy(labels, data_indices):
-    temp = np.array(labels)[data_indices]
-    temp = Counter(temp)
-
-    if len(temp) == 0:
-        return 0
-
-    prob1 = temp[0] / (temp[0] + temp[1])
-    prob2 = temp[1] / (temp[0] + temp[1])
-    entropy = prob1 * (-log2(prob1)) + prob2 * (-log2(prob2))
-    return entropy
-
-
-def information_gain(data, labels, data_indices, attr, attr_index):
+def information_gain(data, labels, attr, attr_index):
+    ebs = entropy(labels)  # entropy before splitting
     if attr in rd.encode:
-        pos_attr_values = len(rd.encode[attr])
+        nv = len(rd.encode[attr])  # number of values this attribute can take
     else:
-        pos_attr_values = 2
+        nv = 2
 
-    before_entropy = entropy(labels, data_indices)
-    after_entropy = 0
+    total_samples = len(labels)
+    eas = 0
+    ioc = []
+    for value in range(nv):
+        ias, = np.where(data[:, attr_index] == value)
+        las = labels[ias]
+        eas += (len(ias) / total_samples) * entropy(las)
+        ioc.append(ias)
 
-    x = data[data_indices]
-    total = len(x)
-
-    children_indices = []
-    for i in range(pos_attr_values):
-        indices, = np.where(x[:, attr_index] == i)
-        children_indices.append(indices)
-        after_entropy += (entropy(labels, indices) * (len(indices) / total))
-
-    information = before_entropy - after_entropy
-    return (children_indices, information)
+    return (ebs - eas), ioc
 
 
-def select_best_attr(data, labels, data_indices, attribs):
-    best_children = None
-    best_info_gain = -1
-    best_attr = None
-    for i, attr in attribs:
-        children, info_gain = information_gain(data, labels, data_indices, attr, i)
-        if info_gain > 0 and info_gain > best_info_gain:
-            best_children = children
-            best_info_gain = info_gain
-            best_attr = (i, attr)
-    return best_attr, best_children
+def best_attribute(data, labels, attributes):
+    best_attr = (None, -1, None)
+    for attr in attributes:
+        igain, c = information_gain(data, labels, attr[1], attr[0])
+        if igain > 0 and igain > best_attr[1]:
+            best_attr = (attr, igain, c)
+    return best_attr
 
 
-def create_node(labels, data_indices):
+def create_node(labels, indices):
+    ltc = Counter(labels[indices])
     node = Node(len(nodes))
-    node.data_indices = data_indices
-    temp = Counter(labels[data_indices])
-    node.majority_cls = 0 if temp[0] > temp[1] else 1
+    node.di = indices
+    node.majority = 0 if ltc[0] >= ltc[1] else 1
     nodes.append(node)
     return node
 
 
-def height(graph, index):
-    if index not in graph:
-        return 0
-    elif len(graph[index]) == 0:
-        return 0
-    else:
-        return 1 + max([height(graph, graph[index][j].index) for j in graph[index]])
+def is_alone(labels):
+    if len(Counter(labels)) < 2:
+        return True
+    return False
 
 
-def build_tree(graph, data, labels, data_indices, attribs):
-    if len(Counter(labels[data_indices])) == 1:
-        return create_node(labels, data_indices)
+def build_tree(data, labels, indices, attrib):
+    print("\r\x1b[K" + str(len(nodes)), end=" ")
+    dtc = data[indices]
+    ltc = labels[indices]
 
-    elif len(data_indices) == 0:
-        print("Yeh kaise ho gaya?")
+    if len(indices) == 0:  # no data
         return None
 
-    elif len(data_indices) == 1:
-        node = Node(len(nodes))
-        node.data_indices = data_indices
-        node.majority_cls = labels[data_indices][0]
-        nodes.append(node)
-        return node
+    node = create_node(labels, indices)
 
-    elif len(attribs) == 0:
-        return create_node(labels, data_indices)
+    if len(attrib) == 0 or is_alone(ltc):  # no attrib to split on
+        return node.index
 
-    else:
-        best_attr, best_children = select_best_attr(data, labels, data_indices, attribs)
-        if best_attr is None:
-            return create_node(labels, data_indices)
-        else:
-            node = create_node(labels, data_indices)
-            node.split_attr = best_attr
-            # attribs.remove(best_attr)
-            best_children = [build_tree(graph, data, labels, children_indices, attribs)for children_indices in best_children]
-            for i, child in enumerate(best_children):
-                if node.index not in graph:
-                    graph[node.index] = {}
-                if child is not None:
-                    graph[node.index][i] = child
-            return node
+    best_attr, igain, childs = best_attribute(dtc, ltc, attrib)
+    if best_attr is None:
+        return node.index
+
+    node.sa = best_attr
+    attrib.remove(best_attr)
+    for split_attr_value, child_indices in enumerate(childs):
+        child_index = build_tree(dtc, ltc, child_indices, list(attrib))
+        if child_index is not None:
+            if node.index not in graph:
+                graph[node.index] = {}
+            graph[node.index][split_attr_value] = child_index
+
+    return node.index
 
 
-def test(graph, root, x):
-    if root.split_attr == None:
-        return root.majority_cls
-
-    attr_value = x[root.split_attr[0]]
-    if attr_value in graph[root.index]:
-        return test(graph, graph[root.index][attr_value], x)
-
-    return root.majority_cls
+ls = []
 
 
-def get_accuracy(graph, root, x, y):
+def dfs(root):
+    ls.append(root)
+    if root in graph:
+        for key in graph[root]:
+            dfs(graph[root][key])
+
+
+def height(root):
+    if root not in graph:
+        return 0
+
+    ans = 0
+    for key in graph[root]:
+        x = height(graph[root][key])
+        if x > ans:
+            ans = x
+    return ans + 1
+
+
+def predict(node_index, x):
+    node = nodes[node_index]
+    # print(node_index, node.sa)
+    if node.sa is None:
+        return node.majority
+
+    key = x[node.sa[0]]
+    if key not in graph[node.index]:
+        return node.majority
+
+    return predict(graph[node.index][key], x)
+
+
+def get_accuracy(data, labels):
     pred = []
-    for each in tqdm(x):
-        pred.append(test(graph, root, each))
+    for i, x in enumerate(data):
+        pred.append(predict(0, x))
+    return accuracy_score(labels, pred)
 
-    return accuracy_score(y, pred)
+
+def accuracy():
+    train_acc = get_accuracy(train_data, train_labels) * 100
+    valid_acc = get_accuracy(valid_data, valid_labels) * 100
+    test_acc = get_accuracy(test_data, test_labels) * 100
+
+    return train_acc, valid_acc, test_acc
 
 
-data = rd.preprocess("dataset/dtree_data/train.csv")
-attributes = rd.attributes[1:]
-attributes = [(i, attr) for i, attr in enumerate(attributes)]
-labels = np.array(data[:, 0])
-data = np.delete(data, 0, 1)
+train_data = rd.preprocess("dataset/dtree_data/train.csv")
+train_labels = np.array(train_data[:, 0])
+train_data = np.delete(train_data, 0, 1)
+test_data = rd.preprocess("dataset/dtree_data/test.csv")
+test_labels = np.array(test_data[:, 0])
+test_data = np.delete(test_data, 0, 1)
+valid_data = rd.preprocess("dataset/dtree_data/valid.csv")
+valid_labels = np.array(valid_data[:, 0])
+valid_data = np.delete(valid_data, 0, 1)
 
-build_tree(graph, data, labels, [i for i in range(len(data))], attributes)
+
+# data = data[:10]
+# labels = labels[:10]
+
+build_tree(train_data, train_labels, [i for i in range(len(train_data))], list(attributes))
+print("\nTraining accuracy: %0.2f Validation accuracy: %0.2f Test accuracy: %0.2f" % accuracy())
