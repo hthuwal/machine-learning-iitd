@@ -12,9 +12,12 @@ graph = {}
 
 
 def my_plot(train, valid, test, x):
-    a, = plt.plot(x, train, 'b', linestyle='solid')
-    b, = plt.plot(x, valid, 'g', linestyle='solid')
-    c, = plt.plot(x, test, 'r', linestyle='solid')
+    a, = plt.plot(x, train, 'bo', linestyle='solid')
+    b, = plt.plot(x, valid, 'g+', linestyle='solid')
+    c, = plt.plot(x, test, 'rx', linestyle='solid')
+    plt.xlabel("Number of Nodes")
+    plt.ylabel("Accuracies")
+    plt.title("Number of Nodes: %d" % x[-1])
     plt.legend([a, b, c], ["Training Accuracy: %0.2f" % train[-1], "Validation Accuracy: %0.2f" % valid[-1], "Test Accuracy: %0.2f" % test[-1]])
     return fig
 
@@ -161,6 +164,9 @@ def predict(node_index, x, bfs_fast):
     if key not in graph[node.index]:
         return node.majority
 
+    if bfs_fast[graph[node.index][key]] == 0:
+        return node.majority
+
     return predict(graph[node.index][key], x, bfs_fast)
 
 
@@ -211,7 +217,52 @@ def part_a():
     plt.show()
 
 
-# def part_b(graph):
+def find_num_nodes_in_tree(root_index):
+    if root_index not in graph:
+        return 1
+    else:
+        ans = 1
+        for key in graph[root_index]:
+            ans += find_num_nodes_in_tree(graph[root_index][key])
+        return ans
+
+
+def pruning():
+    bfs_fast = np.ones(len(bfs_order))
+    num_nodes = len(bfs_order)
+    ta, va, tea = accuracy(bfs_fast)
+
+    train = [ta]
+    valid = [va]
+    test = [tea]
+    x = [num_nodes]
+    best_va = va
+    my_plot(train, valid, test, x)
+
+    for i in tqdm(range(len(bfs_order) - 1, 0, -1)):
+        bfs_fast[bfs_order[i]] = 0
+        valid_acc = get_accuracy(valid_data, valid_labels, bfs_fast) * 100
+        if valid_acc > best_va:
+            best_va = valid_acc
+            train_acc = get_accuracy(train_data, train_labels, bfs_fast) * 100
+            test_acc = get_accuracy(test_data, test_labels, bfs_fast) * 100
+            num_nodes = x[-1] - find_num_nodes_in_tree(bfs_order[i])
+            train.append(train_acc)
+            test.append(test_acc)
+            valid.append(valid_acc)
+            x.append(num_nodes)
+            fig.clf()
+            my_plot(train, valid, test, x)
+            plt.gca().invert_xaxis()
+            plt.pause(0.001)
+        else:
+            bfs_fast[bfs_order[i]] = 1
+
+    fig.clf()
+    my_plot(train, valid, test, x)
+    plt.gca().invert_xaxis()
+    plt.show()
+
 
 train_data = rd.preprocess("dataset/dtree_data/train.csv")
 train_labels = np.array(train_data[:, 0])
@@ -232,4 +283,5 @@ for i in range(len(nodes)):
 
 print("\nTraining accuracy: %0.2f Validation accuracy: %0.2f Test accuracy: %0.2f" % accuracy(bfs_fast))
 
-part_a()
+# part_a()
+pruning()
