@@ -16,15 +16,15 @@ class Layer(object):
 
 
 class Neural_Network(object):
-    def __init__(self, num_inputs, num_hidden_units, activation):
-        self.num_layers = len(num_hidden_units) + 1
-        self.layers = [Layer(num_hidden_units[0], activation, num_inputs)]
+    def __init__(self, num_inputs, num_hidden_units_list, activation):
+        self.num_layers = len(num_hidden_units_list) + 1
+        self.layers = [Layer(num_hidden_units_list[0], activation, num_inputs)]
 
-        for i in range(1, len(num_hidden_units)):
-            layer = Layer(num_hidden_units[i], activation, num_hidden_units[i - 1])
+        for i in range(1, len(num_hidden_units_list)):
+            layer = Layer(num_hidden_units_list[i], activation, num_hidden_units_list[i - 1])
             self.layers.append(layer)
 
-        layer = Layer(2, "sigmoid", num_hidden_units[-1])
+        layer = Layer(2, "sigmoid", num_hidden_units_list[-1])
         self.layers.append(layer)
 
     def forward_pass(self, inp):
