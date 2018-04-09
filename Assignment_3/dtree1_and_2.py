@@ -188,13 +188,13 @@ def accuracy(bfs_fast):
 fig = plt.figure()
 
 
-def part_a():
+def part_a(step=10):
     train = []
     test = []
     valid = []
     x = []
 
-    for i in tqdm(range(0, len(nodes), 10)):
+    for i in tqdm(range(0, len(nodes), step)):
         bfs_fast = np.zeros(len(nodes))
 
         for j in range(len(bfs_order[0:i])):
@@ -227,7 +227,7 @@ def find_num_nodes_in_tree(root_index):
         return ans
 
 
-def pruning():
+def pruning(step=-1):
     bfs_fast = np.ones(len(bfs_order))
     num_nodes = len(bfs_order)
     ta, va, tea = accuracy(bfs_fast)
@@ -239,7 +239,7 @@ def pruning():
     best_va = va
     my_plot(train, valid, test, x)
 
-    for i in tqdm(range(len(bfs_order) - 1, 0, -1)):
+    for i in tqdm(range(len(bfs_order) - 1, 0, step)):
         bfs_fast[bfs_order[i]] = 0
         valid_acc = get_accuracy(valid_data, valid_labels, bfs_fast) * 100
         if valid_acc > best_va:
@@ -283,5 +283,5 @@ for i in range(len(nodes)):
 
 print("\nTraining accuracy: %0.2f Validation accuracy: %0.2f Test accuracy: %0.2f" % accuracy(bfs_fast))
 
-# part_a()
-pruning()
+part_a(step=100)
+# pruning() 
