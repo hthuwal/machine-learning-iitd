@@ -34,7 +34,7 @@ encode = {
 def medians(file):
     """
     Given a csv file, find the medians of the categorical attributes for the whole data.
-    params(1): 
+    params(1):
         file : string : the name of the file
     outputs(6):
         median values for the categorical columns
@@ -58,16 +58,18 @@ def medians(file):
     return(statistics.median(age), statistics.median(fnlwgt), statistics.median(edun), statistics.median(capg), statistics.median(capl), statistics.median(hpw))
 
 
-def preprocess(file):
+def preprocess(file, binarize=True):
     """
     Given a file, read its data by encoding categorical attributes and binarising continuos attributes based on median.
-    params(1): 
+    params(1):
         file : string : the name of the file
     outputs(6):
         2D numpy array with the data
     """
     # Calculate the medians
-    agem, fnlwgtm, edunm, capgm, caplm, hpwm = medians(file)
+    if binarize:
+        agem, fnlwgtm, edunm, capgm, caplm, hpwm = medians(file)
+
     fin = open(file, "r")
     reader = csv.reader(fin)
     data = []
@@ -91,14 +93,14 @@ def preprocess(file):
         t[10] = encode["sex"][l[9]]
         t[14] = encode["nc"][l[13]]
 
-        # Binarize the numerical attributes based on median.
+        # if binarize is True then Binarize the numerical attributes based on median else keep them as it is
         # Modify this section to read the file in part c where you split the continuos attributes baed on dynamic median values.
-        t[1] = float(l[0]) >= agem
-        t[3] = float(l[2]) >= fnlwgtm
-        t[5] = float(l[4]) >= edunm
-        t[11] = float(l[10]) >= capgm
-        t[12] = float(l[11]) >= caplm
-        t[13] = float(l[12]) >= hpwm
+        t[1] = (float(l[0]) >= agem) if binarize else agem
+        t[3] = (float(l[2]) >= fnlwgtm) if binarize else fnlwgtm
+        t[5] = (float(l[4]) >= edunm) if binarize else edunm
+        t[11] = (float(l[10]) >= capgm) if binarize else capgm
+        t[12] = (float(l[11]) >= caplm) if binarize else caplm
+        t[13] = (float(l[12]) >= hpwm) if binarize else hpwm
 
         # Convert some of the booleans to ints
         data.append([int(x) for x in t])
