@@ -88,21 +88,28 @@ class Neural_Network(object):
         err = np.sum(np.square(err)) / 2
         return err
 
-    def train(self, eeta, data, labels, batch_size=100, max_iter=1000, threshold=1e-4):
+    def train(self, data, labels, eeta=0.01, batch_size=100, max_iter=1000, threshold=1e-4):
         zip_data = list(zip(data, labels))
 
         it = 1
+        self.forward_pass(data)
+        old_error = self.error(labels)
+        epochs = 1
         while(it <= max_iter):
-            batch = random.sample(zip_data, batch_size)
-            x, y = zip(*batch)
-            self.forward_pass(x)
-            self.backward_pass(y)
-            self.update_thetas(eeta, 6)
-            error = self.error(y)
-            print("Iteration: %d, Error: %f" % (it, error))
-            if np.abs(error) < threshold:
-                break
-            it += 1
+            for i in range(0, len(zip_data), batch_size):
+                batch = zip_data[i: i + batch_size]
+                x, y = zip(*batch)
+                self.forward_pass(x)
+                self.backward_pass(y)
+                self.update_thetas(eeta, 6)
+                if (it * batch_size) % len(labels) == 0:
+                    self.forward_pass(data)
+                    error = self.error(labels)
+                    print("Epoch: %d, Error: %f" % (epochs, error))
+                    if np.abs(error - old_error) < threshold:
+                        break
+                    epochs += 1
+                it += 1
 
     def predict(self, inp):
         self.forward_pass(inp)
