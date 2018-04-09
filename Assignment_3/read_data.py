@@ -95,12 +95,12 @@ def preprocess(file, binarize=True):
 
         # if binarize is True then Binarize the numerical attributes based on median else keep them as it is
         # Modify this section to read the file in part c where you split the continuos attributes baed on dynamic median values.
-        t[1] = (float(l[0]) >= agem) if binarize else agem
-        t[3] = (float(l[2]) >= fnlwgtm) if binarize else fnlwgtm
-        t[5] = (float(l[4]) >= edunm) if binarize else edunm
-        t[11] = (float(l[10]) >= capgm) if binarize else capgm
-        t[12] = (float(l[11]) >= caplm) if binarize else caplm
-        t[13] = (float(l[12]) >= hpwm) if binarize else hpwm
+        t[1] = (float(l[0]) >= agem) if binarize else float(l[0])
+        t[3] = (float(l[2]) >= fnlwgtm) if binarize else float(l[2])
+        t[5] = (float(l[4]) >= edunm) if binarize else float(l[4])
+        t[11] = (float(l[10]) >= capgm) if binarize else float(l[10])
+        t[12] = (float(l[11]) >= caplm) if binarize else float(l[11])
+        t[13] = (float(l[12]) >= hpwm) if binarize else float(l[12])
 
         # Convert some of the booleans to ints
         data.append([int(x) for x in t])
