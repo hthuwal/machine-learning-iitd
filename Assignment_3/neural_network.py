@@ -89,12 +89,12 @@ class Neural_Network(object):
         err = np.sum(np.square(err)) / 2
         return err
 
-    def train(self, data, labels, eeta=0.01, batch_size=100, max_iter=1000, threshold=1e-4):
+    def train(self, data, labels, dev_data, dev_labels, eeta=0.01, batch_size=100, max_iter=1000, threshold=1e-4):
         zip_data = list(zip(data, labels))
 
         it = 1
-        self.forward_pass(data)
-        old_error = self.error(labels)
+        self.forward_pass(dev_data)
+        old_error = self.error(dev_labels)
         epochs = 1
         while(it <= max_iter):
             for i in range(0, len(zip_data), batch_size):
@@ -105,11 +105,11 @@ class Neural_Network(object):
                 self.update_thetas(eeta)
                 it += 1
 
-            self.forward_pass(data)
-            error = self.error(labels)
-            print("\rEpoch: %d, Error: %f" % (epochs, error), end=" ")
+            self.forward_pass(dev_data)
+            error = self.error(dev_labels)
+            print("\rEpoch: %d, Error on validaton set: %f" % (epochs, error), end=" ")
 
-            if np.abs(error - old_error) < threshold:
+            if np.abs(old_error - error) < threshold:
                 break
             old_error = error
             epochs += 1
