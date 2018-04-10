@@ -1,5 +1,5 @@
 import numpy as np
-import random
+from scipy.special import expit
 
 
 class Layer(object):
@@ -7,7 +7,7 @@ class Layer(object):
         self.num_units = num_units
         self.activation = activation
         self.outputs = np.zeros(num_units)
-        self.thetas = np.random.randn(num_units, num_units_in_prev_layer)
+        self.thetas = np.random.randn(num_units, num_units_in_prev_layer) / np.sqrt(2 / num_units_in_prev_layer)
         self.inputs = None
         self.gradients = None
 
@@ -68,9 +68,10 @@ class Neural_Network(object):
             oj = self.sigmoid(netj)
             return np.multiply(oj, (1 - oj))
         if activation == "ReLU":
-            grad = self.relu(netj)
-            grad[grad >= 0] = 1
-            return grad
+            temp = np.matrix(netj)
+            temp[temp < 0] = 0
+            temp[temp >= 0] = 1
+            return temp
 
     def update_thetas(self, eeta, momentum=5):
         for layer in self.layers:
@@ -101,15 +102,18 @@ class Neural_Network(object):
                 x, y = zip(*batch)
                 self.forward_pass(x)
                 self.backward_pass(y)
-                self.update_thetas(eeta, 6)
-                if (it * batch_size) % len(labels) == 0:
-                    self.forward_pass(data)
-                    error = self.error(labels)
-                    print("Epoch: %d, Error: %f" % (epochs, error))
-                    if np.abs(error - old_error) < threshold:
-                        break
-                    epochs += 1
+                self.update_thetas(eeta)
                 it += 1
+
+            self.forward_pass(data)
+            error = self.error(labels)
+            print("\rEpoch: %d, Error: %f" % (epochs, error), end=" ")
+
+            if np.abs(error - old_error) < threshold:
+                break
+            old_error = error
+            epochs += 1
+        print("\n")
 
     def predict(self, inp):
         self.forward_pass(inp)
@@ -129,7 +133,7 @@ class Neural_Network(object):
         f(x) = 1 / (1 + exp(x))
         """
         # TODO check for correctness
-        return np.divide(np.exp(output), np.add(1, np.exp(output)))
+        return expit(output)
 
     def __repr__(self):
         representation = ""
