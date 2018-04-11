@@ -170,6 +170,36 @@ def predict(node_index, x, bfs_fast):
     return predict(graph[node.index][key], x, bfs_fast)
 
 
+def fast_accuracy(data, labels, node_index, bfs_fast):
+    node = nodes[node_index]
+    if bfs_fast[node_index] == 0:
+        return len(np.where(labels == node.majority)[0])
+
+    if node.sa is None:
+        return len(np.where(labels == node.majority)[0])
+
+    attr = node.sa[1]
+    attr_index = node.sa[0]
+
+    if attr in rd.encode:
+        nv = len(rd.encode[attr])  # number of values this attribute can take
+    else:
+        nv = 2
+
+    ans = 0
+    for value in range(nv):
+        ias, = np.where(data[:, attr_index] == value)
+        las = labels[ias]
+        cdata = data[ias]
+        if value not in graph[node.index]:
+            ans += len(np.where(las == node.majority)[0])
+        elif bfs_fast[graph[node.index][value]] == 0:
+            ans += len(np.where(las == node.majority)[0])
+        else:
+            ans += fast_accuracy(cdata, las, graph[node.index][value], bfs_fast)
+    return ans
+
+
 def get_accuracy(data, labels, bfs_fast):
     pred = []
     for i, x in enumerate(data):
@@ -178,9 +208,9 @@ def get_accuracy(data, labels, bfs_fast):
 
 
 def accuracy(bfs_fast):
-    train_acc = get_accuracy(train_data, train_labels, bfs_fast) * 100
-    valid_acc = get_accuracy(valid_data, valid_labels, bfs_fast) * 100
-    test_acc = get_accuracy(test_data, test_labels, bfs_fast) * 100
+    train_acc = fast_accuracy(train_data, train_labels, 0, bfs_fast) * (100 / len(train_data))
+    valid_acc = fast_accuracy(valid_data, valid_labels, 0, bfs_fast) * (100 / len(valid_data))
+    test_acc = fast_accuracy(test_data, test_labels, 0, bfs_fast) * (100 / len(test_data))
 
     return train_acc, valid_acc, test_acc
 
@@ -284,4 +314,4 @@ for i in range(len(nodes)):
 print("\nTraining accuracy: %0.2f Validation accuracy: %0.2f Test accuracy: %0.2f" % accuracy(bfs_fast))
 
 part_a(step=100)
-# pruning() 
+# pruning()
