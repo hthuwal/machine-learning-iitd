@@ -1,4 +1,5 @@
 import numpy as np
+import random
 from scipy.special import expit
 
 
@@ -7,7 +8,7 @@ class Layer(object):
         self.num_units = num_units
         self.activation = activation
         self.outputs = np.zeros(num_units)
-        self.thetas = np.random.randn(num_units, num_units_in_prev_layer) / np.sqrt(2 / num_units_in_prev_layer)
+        self.thetas = np.random.randn(num_units, num_units_in_prev_layer) * 0.001
         self.inputs = None
         self.gradients = None
 
@@ -17,15 +18,23 @@ class Layer(object):
 
 class Neural_Network(object):
     def __init__(self, num_inputs, num_hidden_units_list, activation):
-        self.num_layers = len(num_hidden_units_list) + 1
-        self.layers = [Layer(num_hidden_units_list[0], activation, num_inputs)]
+        np.random.seed(64550)
+        random.seed(93128)
+        if len(num_hidden_units_list) == 0:
+            self.hidden_layer_sizes = num_hidden_units_list
+            self.layers = [Layer(2, "sigmoid", num_inputs)]
+            self.num_layers = len(num_hidden_units_list) + 1
+        else:
+            self.hidden_layer_sizes = num_hidden_units_list
+            self.num_layers = len(num_hidden_units_list) + 1
+            self.layers = [Layer(num_hidden_units_list[0], activation, num_inputs)]
 
-        for i in range(1, len(num_hidden_units_list)):
-            layer = Layer(num_hidden_units_list[i], activation, num_hidden_units_list[i - 1])
+            for i in range(1, len(num_hidden_units_list)):
+                layer = Layer(num_hidden_units_list[i], activation, num_hidden_units_list[i - 1])
+                self.layers.append(layer)
+
+            layer = Layer(2, "sigmoid", num_hidden_units_list[-1])
             self.layers.append(layer)
-
-        layer = Layer(2, "sigmoid", num_hidden_units_list[-1])
-        self.layers.append(layer)
 
     def forward_pass(self, inp):
         inp = np.matrix(inp)
@@ -75,6 +84,7 @@ class Neural_Network(object):
 
     def update_thetas(self, eeta, momentum=5):
         for layer in self.layers:
+            # print("Updating", np.max(layer.gradients))
             layer.thetas = layer.thetas - eeta * (layer.gradients)
 
     def error(self, gold_labels):
@@ -89,30 +99,41 @@ class Neural_Network(object):
         err = np.sum(np.square(err)) / 2
         return err
 
-    def train(self, data, labels, dev_data, dev_labels, eeta=0.01, batch_size=100, max_iter=1000, threshold=1e-4):
+    def train(self, data, labels, eeta=0.01, batch_size=100, max_iter=1000, threshold=1e-4, decay=False):
+        # pdb.set_trace()
         zip_data = list(zip(data, labels))
-
         it = 1
+        random.shuffle(zip_data)
+        dev_data, dev_labels = zip(*zip_data[0: int(0.1 * len(zip_data))])
         self.forward_pass(dev_data)
         old_error = self.error(dev_labels)
         epochs = 1
-        while(it <= max_iter):
-            for i in range(0, len(zip_data), batch_size):
+        lr = eeta
+        while(epochs <= max_iter):
+            dev_data, dev_labels = zip(*zip_data[0: int(0.1 * len(zip_data))])
+            for i in range(int(0.1 * len(zip_data)), len(zip_data), batch_size):
                 batch = zip_data[i: i + batch_size]
                 x, y = zip(*batch)
                 self.forward_pass(x)
                 self.backward_pass(y)
-                self.update_thetas(eeta)
-                it += 1
+                if decay:
+                    self.update_thetas(lr / batch_size)
+                else:
+                    self.update_thetas(lr)
 
+                it += 1
+                if decay:
+                    lr = eeta * (1 / np.sqrt(it))
             self.forward_pass(dev_data)
             error = self.error(dev_labels)
-            print("\rEpoch: %d, Error on validaton set: %f" % (epochs, error), end=" ")
+            print("\rEpoch: %d, Error: %f old_error: %f" % (epochs, error, old_error), end=" ")
 
             if np.abs(old_error - error) < threshold:
                 break
             old_error = error
             epochs += 1
+            # random.shuffle(zip_data)
+
         print("\n")
 
     def predict(self, inp):
