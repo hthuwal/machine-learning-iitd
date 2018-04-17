@@ -8,8 +8,8 @@ import matplotlib.pyplot as plt
 
 def my_plot():
     x = [10, 20, 30, 40, 50]
-    train_acc = [35.171, 35.967, 35.56, 33.009, 35.205]
-    test_acc = [34.930, 35.825, 34.862, 32.787, 35.140]
+    train_acc = [35.171, 35.967, 35.56, 33.009, 35.205]  # values obtained after running main
+    test_acc = [34.930, 35.825, 34.862, 32.787, 35.140]  # values obtained from kaggle
     a, = plt.plot(x, train_acc, 'bo', linestyle='solid')
     b, = plt.plot(x, test_acc, 'go', linestyle='solid')
     # c, = plt.plot(x, test, 'r', linestyle='solid')
