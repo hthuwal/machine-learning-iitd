@@ -3,6 +3,20 @@ import numpy as np
 from collections import Counter
 import os
 from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+
+
+def my_plot():
+    x = [10, 20, 30, 40, 50]
+    train_acc = [35.171, 35.967, 35.56, 33.009, 35.205]
+    test_acc = [34.930, 35.825, 34.862, 32.787, 35.140]
+    a, = plt.plot(x, train_acc, 'bo', linestyle='solid')
+    b, = plt.plot(x, test_acc, 'go', linestyle='solid')
+    # c, = plt.plot(x, test, 'r', linestyle='solid')
+    plt.xlabel("max_iter")
+    plt.ylabel("Accuracy")
+    plt.title("Variation in accuracy with change in max_iterations")
+    plt.legend([a, b], ["Training Accuracy", "Test Accuracy"])
 
 
 def load_data(folder):
@@ -95,4 +109,6 @@ def main2(file, retrain=False, max_iter=300):
 train_data, train_labels = load_data("dataset/train")
 test_data, test_labels = load_data("dataset/test")
 # main(retrain=True, max_iter=10)
-main2("cum_300.model", retrain=True)
+# main2("cum_300.model", retrain=True)
+my_plot()
+plt.show()
