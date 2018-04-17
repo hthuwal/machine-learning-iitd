@@ -106,9 +106,10 @@ def main2(file, retrain=False, max_iter=300):
             f.write("%d,%s\n" % (i, predictions[i]))
 
 
-train_data, train_labels = load_data("dataset/train")
-test_data, test_labels = load_data("dataset/test")
-# main(retrain=True, max_iter=10)
-# main2("cum_300.model", retrain=True)
-my_plot()
-plt.show()
+if __name__ == '__main__':
+    train_data, train_labels = load_data("dataset/train")
+    test_data, test_labels = load_data("dataset/test")
+    # main(retrain=True, max_iter=10)
+    # main2("cum_300.model", retrain=True)
+    my_plot()
+    plt.show()
