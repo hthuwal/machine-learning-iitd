@@ -131,3 +131,4 @@ ENV/
 /Assignment_3/dataset/*
 
 */dataset/*
+*/models/*
