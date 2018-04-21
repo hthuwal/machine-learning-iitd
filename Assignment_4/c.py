@@ -1,13 +1,15 @@
 from tqdm import tqdm
 import torch
 import torch.nn as nn
+import os
 from torch.autograd import Variable
 import torch.utils.data as Data
 import numpy as np
 from sklearn.metrics import accuracy_score
 from a import load_data
+from b import save_to_file
 from sklearn.model_selection import train_test_split
-
+import sys
 use_cuda = torch.cuda.is_available()
 
 
@@ -78,6 +80,10 @@ if use_cuda:
 
 def train(epochs, batch_size, model_file, input_size, hidden_units, label_size):
     model = NN(input_size, hidden_units, label_size)
+    if os.path.exists(model_file):
+        print("Loading Model: %s" % (model_file))
+        model.load_state_dict(torch.load(model_file, map_location=lambda storage, loc: storage))
+
     if use_cuda:
         model = model.cuda()
 
@@ -86,6 +92,7 @@ def train(epochs, batch_size, model_file, input_size, hidden_units, label_size):
     dataset = torch.utils.data.TensorDataset(train_data, train_labels)
     train_loader = Data.DataLoader(dataset=dataset, batch_size=batch_size, shuffle=True)
 
+    model.train()
     for epoch in range(epochs):
         gold = []
         pred = []
@@ -118,4 +125,38 @@ def train(epochs, batch_size, model_file, input_size, hidden_units, label_size):
     torch.save(model.state_dict(), model_file)
 
 
+def test(batch_size, model_file, input_size, hidden_units, label_size):
+    model = NN(input_size, hidden_units, label_size)
+    if os.path.exist(model_file):
+        print("Loading Model: %s" % (model_file))
+        model.load_state_dict(torch.load(model_file, map_location=lambda storage, loc: storage))
+    else:
+        print("Model does not exist")
+        sys.exit()
+
+    if use_cuda:
+        model = model.cuda()
+
+    dataset = torch.utils.data.TensorDataset(test_data)
+    test_loader = Data.DataLoader(dataset=dataset, batch_size=batch_size, shuffle=False)
+    model.eval()
+
+    pred = []
+    for x in tqdm(test_loader):
+        b_x = Variable(x)
+        print(x)
+        input()
+        if use_cuda:
+            b_x = b_x.cuda()
+        # b_y = b_y.view(b_y.size(0))
+
+        outputs = model(b_x)  # output of the cnn
+        cur_pred = torch.max(outputs, dim=1)[1].data.cpu().numpy().tolist()
+        pred.extend(cur_pred)
+
+    return pred
+
+
 train(100, 100, "nn.model", len(train_data[0]), 100, len(l2i))
+pred = test(100, "nn.model", len(train_data[0]), 100, len(l2i))
+save_to_file(index_2_labels(pred, i2l), "out_b100_h100.txt")
