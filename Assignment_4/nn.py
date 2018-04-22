@@ -29,6 +29,39 @@ class NN(nn.Module):
         return x
 
 
+class CNN(nn.Module):
+    def __init__(self, out_channels, kernel_size):
+        super(CNN, self).__init__()
+        self.input_droput = nn.Dropout(p=0.2)
+        self.conv1 = nn.Sequential(  # batch x 1 x 28 x 28
+            nn.Conv2d(
+                in_channels=1,
+                out_channels=out_channels,
+                kernel_size=kernel_size,
+                stride=1,
+                padding=(kernel_size - 1) // 2,
+            ),
+            nn.ReLU(),  # batch x 10 x 28 x 28
+            nn.MaxPool2d(kernel_size=4),  # batch x 10 x 7 x 7
+            nn.Dropout(p=0.2),
+        )
+        self.out = nn.Linear(out_channels * 7 * 7, 20)
+
+    def forward(self, x):
+        # print(x.size())
+        x = x.view(x.size(0), 1, 28, 28)
+        # print(x.size())
+        x = self.input_droput(x)
+        # print(x.size())
+        x = self.conv1(x)
+        # print(x.size())
+        x = x.view(x.size(0), -1)
+        # print(x.size())
+        x = self.out(x)
+        # print(x.size())
+        return x
+
+
 def gen_index_for_labels(labels):
     labels = list(set(labels))
     l2i = {}
@@ -105,7 +138,7 @@ def train(model, model_file, epochs=100, batch_size=1000):
         else:
             improved = ""
 
-        print('\b\n\nEpoch: ', epoch, '| train loss: %.4f' % loss, '| train_accuracy: %.2f' % accuracy, '| dev_accuracy: %.2f%s' % (dev_accuracy, improved))
+        print('Epoch: ', epoch, '| train loss: %.4f' % loss, '| train_accuracy: %.2f' % accuracy, '| dev_accuracy: %.2f%s' % (dev_accuracy, improved), "\n")
 
 
 def predict(model, model_file, data, batch_size=100, load=True):
@@ -139,6 +172,15 @@ def predict(model, model_file, data, batch_size=100, load=True):
 
 def part_c(hidden_units=1000, epochs=200, model_file="nn.model", output_file="out.txt"):
     model = NN(len(train_data[0]), hidden_units, len(l2i))
+    print(model)
+    train(model, model_file, epochs=epochs, batch_size=10000)
+    pred = predict(model, model_file, test_data, batch_size=100)
+    save_to_file(index_2_labels(pred, i2l), output_file)
+
+
+def part_d(out_channels=10, kernel_size=3, epochs=200, model_file="cnn.model", output_file="out.txt"):
+    model = CNN(out_channels, kernel_size)
+    print(model)
     train(model, model_file, epochs=epochs, batch_size=10000)
     pred = predict(model, model_file, test_data, batch_size=100)
     save_to_file(index_2_labels(pred, i2l), output_file)
@@ -176,3 +218,11 @@ hidden_units = 1000
 model_file = "nn_%d.model" % hidden_units
 output_file = "nn_out_%d.txt" % hidden_units
 part_c(hidden_units, epochs=200, model_file=model_file, output_file=output_file)
+
+
+# part d
+out_channels = 10
+kernel_size = 5
+model_file = "nn_%d_%d.model" % (out_channels, kernel_size)
+output_file = "nn_out_%d_%d.txt" % (out_channels, kernel_size)
+part_d(out_channels=out_channels, kernel_size=kernel_size, epochs=200, model_file=model_file, output_file=output_file)
