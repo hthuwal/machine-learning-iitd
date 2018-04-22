@@ -87,7 +87,7 @@ def train(epochs, batch_size, model_file, input_size, hidden_units, label_size):
     if use_cuda:
         model = model.cuda()
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
     loss_func = nn.CrossEntropyLoss()  # taking softmax and log likelihood
     dataset = torch.utils.data.TensorDataset(train_data, train_labels)
     train_loader = Data.DataLoader(dataset=dataset, batch_size=batch_size, shuffle=True)
@@ -122,7 +122,11 @@ def train(epochs, batch_size, model_file, input_size, hidden_units, label_size):
         loss = np.mean(np.array(epoch_loss))
         print('\b\n\nEpoch: ', epoch, '| train loss: %.4f' % loss, '| train_accuracy: %.2f' % accuracy)
 
-    torch.save(model.state_dict(), model_file)
+        print("Saving Model")
+        torch.save(model.state_dict(), model_file)
+
+
+train(1000, 100, "nn.model", len(train_data[0]), 100, len(l2i))
 
 
 def test(batch_size, model_file, input_size, hidden_units, label_size):
