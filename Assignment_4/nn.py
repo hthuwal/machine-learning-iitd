@@ -223,6 +223,6 @@ part_c(hidden_units, epochs=200, model_file=model_file, output_file=output_file)
 # part d
 out_channels = 10
 kernel_size = 5
-model_file = "nn_%d_%d.model" % (out_channels, kernel_size)
-output_file = "nn_out_%d_%d.txt" % (out_channels, kernel_size)
+model_file = "cnn_%d_%d.model" % (out_channels, kernel_size)
+output_file = "cnn_out_%d_%d.txt" % (out_channels, kernel_size)
 part_d(out_channels=out_channels, kernel_size=kernel_size, epochs=200, model_file=model_file, output_file=output_file)
