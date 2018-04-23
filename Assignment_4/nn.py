@@ -239,9 +239,9 @@ def part_d(out_channels=10, kernel_size=3, epochs=200, model_file="cnn.model", o
 
 
 train_data, train_labels = load_data("dataset/train")
-train_data = scale(train_data)
+train_data = (train_data - train_data.mean(axis=0)) / train_data.std(axis=0)
 test_data, test_labels = load_data("dataset/test")
-test_data = scale(test_data)
+test_data = (test_data - test_data.mean(axis=0)) / test_data.std(axis=0)
 l2i, i2l = gen_index_for_labels(train_labels)
 train_labels = lables_2_index(train_labels, l2i)
 
