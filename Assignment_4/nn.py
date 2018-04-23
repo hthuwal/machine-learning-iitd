@@ -3,6 +3,7 @@ import os
 import torch
 import torch.nn as nn
 import torch.utils.data as Data
+import torch.nn.functional as F
 
 from a import load_data
 from b import save_to_file
@@ -10,7 +11,7 @@ from torch.autograd import Variable
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import scale
-
+from tqdm import tqdm
 
 use_cuda = torch.cuda.is_available()
 
@@ -26,6 +27,7 @@ class NN(nn.Module):
 
     def forward(self, x):
         x = self.layer(x)
+        x = F.log_softmax(x, dim=0)
         return x
 
 
@@ -87,7 +89,7 @@ def index_2_labels(indices, i2l):
     return np.array(labels)
 
 
-def train(model, model_file, epochs=100, batch_size=1000):
+def train(model, model_file, epochs=100, batch_size=1000, dev=True):
     if os.path.exists(model_file):
         print("Loading Model: %s" % (model_file))
         model.load_state_dict(torch.load(model_file, map_location=lambda storage, loc: storage))
@@ -96,15 +98,19 @@ def train(model, model_file, epochs=100, batch_size=1000):
         model = model.cuda()
 
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
-    loss_func = nn.CrossEntropyLoss()  # taking softmax and log likelihood
-    dataset = torch.utils.data.TensorDataset(train_data, train_labels)
+    loss_func = nn.NLLLoss()  # taking softmax and log likelihood
+    if dev:
+        dataset = torch.utils.data.TensorDataset(train_data, train_labels)
+    else:
+        dataset = torch.utils.data.TensorDataset(org_train_data, org_train_labels)
+
     train_loader = Data.DataLoader(dataset=dataset, batch_size=batch_size, shuffle=True)
 
     best_dev = 0
     for epoch in range(epochs):
         model.train()
         gold, pred, epoch_loss = [], [], []
-        for x, y in train_loader:
+        for x, y in tqdm(train_loader):
             b_x = Variable(x)
             b_y = Variable(y)
 
@@ -126,19 +132,24 @@ def train(model, model_file, epochs=100, batch_size=1000):
 
         accuracy = accuracy_score(gold, pred) * 100
         loss = np.mean(np.array(epoch_loss))
-        dev_pred = predict(model, model_file, dev_data, batch_size=100, load=False)
-        dev_gold = dev_labels.cpu().numpy().tolist()
-        dev_accuracy = accuracy_score(dev_gold, dev_pred) * 100
+        if dev:
+            dev_pred = predict(model, model_file, dev_data, batch_size=100, load=False)
+            dev_gold = dev_labels.cpu().numpy().tolist()
+            dev_accuracy = accuracy_score(dev_gold, dev_pred) * 100
 
-        if dev_accuracy > best_dev:
+            if dev_accuracy > best_dev:
+                print("Saving Model")
+                torch.save(model.state_dict(), model_file)
+                best_dev = dev_accuracy
+                improved = "*"
+            else:
+                improved = ""
+
+            print('Epoch: ', epoch, '| train loss: %.4f' % loss, '| train_accuracy: %.2f' % accuracy, '| dev_accuracy: %.2f%s' % (dev_accuracy, improved), "\n")
+        else:
             print("Saving Model")
             torch.save(model.state_dict(), model_file)
-            best_dev = dev_accuracy
-            improved = "*"
-        else:
-            improved = ""
-
-        print('Epoch: ', epoch, '| train loss: %.4f' % loss, '| train_accuracy: %.2f' % accuracy, '| dev_accuracy: %.2f%s' % (dev_accuracy, improved), "\n")
+            print('Epoch: ', epoch, '| train loss: %.4f' % loss, '| train_accuracy: %.2f' % accuracy, "\n")
 
 
 def predict(model, model_file, data, batch_size=100, load=True):
@@ -170,18 +181,18 @@ def predict(model, model_file, data, batch_size=100, load=True):
     return pred
 
 
-def part_c(hidden_units=1000, epochs=200, model_file="nn.model", output_file="out.txt"):
+def part_c(hidden_units=1000, epochs=200, model_file="nn.model", output_file="out.txt", dev=True):
     model = NN(len(train_data[0]), hidden_units, len(l2i))
     print(model)
-    train(model, model_file, epochs=epochs, batch_size=10000)
+    train(model, model_file, epochs=epochs, batch_size=100, dev=dev)
     pred = predict(model, model_file, test_data, batch_size=100)
     save_to_file(index_2_labels(pred, i2l), output_file)
 
 
-def part_d(out_channels=10, kernel_size=3, epochs=200, model_file="cnn.model", output_file="out.txt"):
+def part_d(out_channels=10, kernel_size=3, epochs=200, model_file="cnn.model", output_file="out.txt", dev=True):
     model = CNN(out_channels, kernel_size)
     print(model)
-    train(model, model_file, epochs=epochs, batch_size=10000)
+    train(model, model_file, epochs=epochs, batch_size=100, dev=dev)
     pred = predict(model, model_file, test_data, batch_size=100)
     save_to_file(index_2_labels(pred, i2l), output_file)
 
@@ -193,12 +204,16 @@ test_data = scale(test_data)
 l2i, i2l = gen_index_for_labels(train_labels)
 train_labels = lables_2_index(train_labels, l2i)
 
+org_train_data = np.array(train_data)
+org_train_labels = np.array(train_labels)
 # splitting into train and dev
 train_data, dev_data, train_labels, dev_labels = train_test_split(train_data, train_labels, random_state=64, test_size=0.20)
 
 # Converting to torch variables
 train_data = torch.from_numpy(train_data).type(torch.FloatTensor)
 train_labels = torch.from_numpy(train_labels).type(torch.LongTensor)
+org_train_data = torch.from_numpy(org_train_data).type(torch.FloatTensor)
+org_train_labels = torch.from_numpy(org_train_labels).type(torch.LongTensor)
 
 dev_data = torch.from_numpy(dev_data).type(torch.FloatTensor)
 dev_labels = torch.from_numpy(dev_labels).type(torch.LongTensor)
@@ -211,7 +226,8 @@ if use_cuda:
     dev_data = dev_data.cuda()
     dev_labels = dev_labels.cuda()
     test_data = test_data.cuda()
-
+    org_train_data = org_train_data.cuda()
+    org_train_labels = org_train_labels.cuda()
 
 # part c
 hidden_units = 1000
