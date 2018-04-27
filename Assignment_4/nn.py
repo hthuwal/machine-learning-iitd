@@ -84,10 +84,10 @@ class CNN(nn.Module):
                 padding=(kernel_size - 1) // 2,
             ),
             nn.ReLU(),  # batch x 10 x 28 x 28
-            nn.MaxPool2d(kernel_size=4),  # batch x 10 x 7 x 7
+            nn.MaxPool2d(kernel_size=2),  # batch x 10 x 14 x 14
             nn.Dropout(p=0.2),
         )
-        self.out = nn.Linear(out_channels * 7 * 7, 20)
+        self.out = nn.Linear(out_channels * 14 * 14, 20)
 
     def forward(self, x):
         # print(x.size())
