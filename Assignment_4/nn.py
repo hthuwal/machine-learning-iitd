@@ -10,7 +10,6 @@ from b import save_to_file
 from torch.autograd import Variable
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import scale
 from tqdm import tqdm
 
 use_cuda = torch.cuda.is_available()
