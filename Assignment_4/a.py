@@ -57,16 +57,16 @@ def predict(model, x, cluster_labels):
     return ans
 
 
-def main(file="models/kmeans%d.model", retrain=False, max_iter=300):
+def part3(file="kmeans%d.model", retrain=False, max_iter=300):
 
-    old_file = "models/kmeans10.model"
-    for i in range(10, 300, 10):
+    old_file = "kmeans10.model"
+    for i in range(10, 60, 10):
         file_name = file % (i)
         if os.path.exists(old_file):
             print("Loading %s" % (old_file))
             model = pickle.load(open(old_file, "rb"))
         else:
-            model = KMeans(n_init=10, n_clusters=20, n_jobs=8, verbose=0, max_iter=max_iter)
+            model = KMeans(n_init=10, n_clusters=20, n_jobs=-1, verbose=0, max_iter=max_iter)
 
         if retrain:
             model.max_iter = max_iter
@@ -78,27 +78,31 @@ def main(file="models/kmeans%d.model", retrain=False, max_iter=300):
         train_acc, cluster_labels = get_clustering_accuracy(model.labels_)
         print("%d: Training Accuracy: %f" % (i, train_acc))
         predictions = predict(model, test_data, cluster_labels)
-        with open("outputs/out%d.txt" % (i), "w") as f:
+        with open("out%d.txt" % (i), "w") as f:
             f.write("ID,CATEGORY\n")
             for i in range(len(predictions)):
                 f.write("%d,%s\n" % (i, predictions[i]))
 
 
-def main2(file, retrain=False, max_iter=300):
+def main2(file=None, retrain=False, max_iter=300):
     if os.path.exists(file):
-        print("Loading %s" % (file))
+        print("Loading %s..." % (file))
         model = pickle.load(open(file, "rb"))
     else:
-        model = KMeans(n_init=10, n_clusters=20, n_jobs=8, verbose=1, max_iter=max_iter)
+        model = KMeans(n_init=10, n_clusters=20, n_jobs=1, verbose=1, max_iter=max_iter)
 
     if retrain:
         model.max_iter = max_iter
-        print("Training Model")
+        print("Training Model...")
         model.fit(train_data)
         pickle.dump(model, open(file, "wb"))
+        print("Training Complete...")
 
+    print("Getting Training accuracy and cluster Labels..")
     train_acc, cluster_labels = get_clustering_accuracy(model.labels_)
     print("Training Accuracy: %f" % (train_acc))
+
+    print("Predicting Test Data")
     predictions = predict(model, test_data, cluster_labels)
     with open("out.txt", "w") as f:
         f.write("ID,CATEGORY\n")
@@ -109,7 +113,7 @@ def main2(file, retrain=False, max_iter=300):
 if __name__ == '__main__':
     train_data, train_labels = load_data("dataset/train")
     test_data, test_labels = load_data("dataset/test")
-    # main(retrain=True, max_iter=10)
-    # main2("cum_300.model", retrain=True)
+    # part3(retrain=True, max_iter=100)
+    main2("temp.model", retrain=True, max_iter=1)
     my_plot()
     plt.show()
