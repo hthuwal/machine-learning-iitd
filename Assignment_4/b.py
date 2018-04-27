@@ -34,38 +34,37 @@ def train_and_predict(model, model_file, pred_file):
     save_to_file(pred, pred_file)
 
 
-train_data, train_labels = load_data("dataset/train")
-test_data, test_labels = load_data("dataset/test")
+if __name__ == '__main__':
+    train_data, train_labels = load_data("dataset/train")
+    test_data, test_labels = load_data("dataset/test")
 
-print("Scaling Data")
-train_data = scale(train_data)
-test_data = scale(test_data)
+    print("Scaling Data")
+    train_data = scale(train_data)
+    test_data = scale(test_data)
 
-print("PCA")
-pca = PCA(n_components=50)  # TODO play with other parameters
-pca.fit(train_data)
+    print("PCA")
+    pca = PCA(n_components=50)  # TODO play with other parameters
+    pca.fit(train_data)
 
-smalld_train_data = pca.transform(train_data)
-smalld_test_data = pca.transform(test_data)
+    smalld_train_data = pca.transform(train_data)
+    smalld_test_data = pca.transform(test_data)
 
-del train_data
-del test_data
+    del train_data
+    del test_data
+    # Linear SVC
 
+    # Grid Search
+    # params = {
+    #     'C': [1e-5, 1e-3, 1e-2, 1e-4, 1e-1, 1, 5, 10.0]
+    # }
 
-# Linear SVC
+    # model = SVC(kernel='linear', decision_function_shape='ovo')
+    # grid = do_gridsearch(model, params)
 
-# Grid Search
-# params = {
-#     'C': [1e-5, 1e-3, 1e-2, 1e-4, 1e-1, 1, 5, 10.0]
-# }
+    # best value of c after gridsearch is c = 0.001, cross validation accuracy of 69
+    model = SVC(C=0.001, kernel='linear', decision_function_shape='ovo', verbose=1)
+    train_and_predict(model, "models/b/best_svm_linear.model", "outputs/b/out_svm_linear.txt")
 
-# model = SVC(kernel='linear', decision_function_shape='ovo')
-# grid = do_gridsearch(model, params)
-
-# best value of c after gridsearch is c = 0.001, cross validation accuracy of 69
-# model = SVC(C=0.001, kernel='linear', decision_function_shape='ovo', verbose=1)
-# train_and_predict(model, "models/b/best_svm_linear.model", "outputs/b/out_svm_linear.txt")
-
-# RBF SVC
-model = SVC(gamma=0.05, C=0.001, verbose=1)
-train_and_predict(model, "models/b/rbf_g_0.05_c_0.01.model", "outputs/b/out_rbf_g_0.05_c_0.01.txt")
+    # RBF SVC
+    # model = SVC(gamma=0.05, C=0.001, verbose=1)
+    # train_and_predict(model, "models/b/rbf_g_0.05_c_0.01.model", "outputs/b/out_rbf_g_0.05_c_0.01.txt")
