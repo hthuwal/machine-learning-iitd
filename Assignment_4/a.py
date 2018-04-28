@@ -2,6 +2,7 @@ import pickle
 import numpy as np
 from collections import Counter
 import os
+import sys
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 
@@ -111,9 +112,43 @@ def main2(file=None, retrain=False, max_iter=300):
 
 
 if __name__ == '__main__':
-    train_data, train_labels = load_data("dataset/train")
-    test_data, test_labels = load_data("dataset/test")
-    # part3(retrain=True, max_iter=100)
-    main2("temp.model", retrain=True, max_iter=1)
-    my_plot()
-    plt.show()
+    if sys.argv[1] == '-t':
+        train_folder = sys.argv[2]
+        model_file = sys.argv[3]
+        print("Loading Train data...")
+        train_data, train_labels = load_data(train_folder)
+        model = KMeans(n_init=10, n_clusters=20, n_jobs=1, verbose=1, max_iter=1)
+        print("Training Model...")
+        model.fit(train_data)
+        print("Training Complete...")
+        print("Getting Training accuracy and cluster Labels..")
+        train_acc, cluster_labels = get_clustering_accuracy(model.labels_)
+        print("Training Accuracy: %f" % (train_acc))
+        print("Dumping Model...")
+        pickle.dump((model, cluster_labels), open(model_file, "wb"))
+
+    elif sys.argv[1] == '-p':
+        test_folder = sys.argv[2]
+        model_file = sys.argv[3]
+        print("Loading Model %s..." % (model_file))
+        model, cluster_labels = pickle.load(open(model_file, "rb"))
+
+        print("Loadint Test data")
+        test_data, test_labels = load_data(test_folder)
+
+        print("Predicting Test Data")
+        predictions = predict(model, test_data, cluster_labels)
+        # print(predictions)
+        with open("out.txt", "w") as f:
+            f.write("ID,CATEGORY\n")
+            for i in range(len(predictions)):
+                f.write("%d,%s\n" % (i, predictions[i]))
+    else:
+        print("Please Enter a valid parameter")
+
+    # test_data, test_labels = load_data("dataset/test")
+    # train_data, train_labels = load_data("dataset/train")
+    # # part3(retrain=True, max_iter=100)
+    # main2("temp.model", retrain=True, max_iter=1)
+    # my_plot()
+    # plt.show()
