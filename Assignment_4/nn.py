@@ -71,7 +71,7 @@ class NN(nn.Module):
 
 
 class CNN(nn.Module):
-    def __init__(self, out_channels, kernel_size):
+    def __init__(self, out_channels, kernel_size, fcc):
         super(CNN, self).__init__()
         self.input_droput = nn.Dropout(p=0.2)
         self.conv1 = nn.Sequential(  # batch x 1 x 28 x 28
@@ -86,7 +86,8 @@ class CNN(nn.Module):
             nn.MaxPool2d(kernel_size=2),  # batch x 10 x 14 x 14
             nn.Dropout(p=0.2),
         )
-        self.out = nn.Linear(out_channels * 14 * 14, 20)
+        self.fcc = nn.Linear(out_channels * 14 * 14, fcc)
+        self.out = nn.Linear(fcc, 20)
 
     def forward(self, x):
         # print(x.size())
@@ -95,8 +96,9 @@ class CNN(nn.Module):
         x = self.input_droput(x)
         # print(x.size())
         x = self.conv1(x)
-        # print(x.size())
         x = x.view(x.size(0), -1)
+        # print(x.size())
+        x = self.fcc(x)
         # print(x.size())
         x = self.out(x)
         x = F.log_softmax(x, dim=0)
@@ -229,8 +231,8 @@ def part_c(hidden_units=1000, epochs=200, model_file="nn.model", output_file="ou
     save_to_file(index_2_labels(pred, i2l), output_file)
 
 
-def part_d(out_channels=10, kernel_size=3, epochs=200, model_file="cnn.model", output_file="out.txt", dev=True):
-    model = CNN(out_channels, kernel_size)
+def part_d(out_channels=10, kernel_size=3, fcc=100, epochs=200, model_file="cnn.model", output_file="out.txt", dev=True):
+    model = CNN(out_channels, kernel_size, fcc)
     print(model)
     train(model, model_file, epochs=epochs, batch_size=100, dev=dev)
     pred = predict(model, model_file, test_data, batch_size=100)
@@ -277,8 +279,9 @@ part_c(hidden_units, epochs=200, model_file=model_file, output_file=output_file)
 
 
 # part d
-out_channels = 10
+out_channels = 64
 kernel_size = 5
-model_file = "cnn_%d_%d.model" % (out_channels, kernel_size)
-output_file = "cnn_out_%d_%d.txt" % (out_channels, kernel_size)
-part_d(out_channels=out_channels, kernel_size=kernel_size, epochs=200, model_file=model_file, output_file=output_file)
+fcc = 50
+model_file = "cnn_%d_%d_%d.model" % (out_channels, kernel_size, fcc)
+output_file = "cnn_out_%d_%d_%d.txt" % (out_channels, kernel_size, fcc)
+part_d(out_channels=out_channels, kernel_size=kernel_size, fcc=fcc, epochs=200, model_file=model_file, output_file=output_file)
