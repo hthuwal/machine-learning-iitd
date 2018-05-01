@@ -16,13 +16,11 @@ use_cuda = torch.cuda.is_available()
 
 cfg = {
     'VGG11_modified': [64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512],
+    'VGGhc': [128, 128, 'M', 128, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512],
+    'VGGhc2': [16, 16, 'M', 32, 32, 'M', 64, 64, 'M', 128, 128, 'M', 256, 256],
     'VGG13_modified': [64, 64, 'M', 128, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512],
     'VGG16_modified': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512, 'M', 512, 512, 512],
     'VGG19_modified': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 256, 'M', 512, 512, 512, 512, 'M', 512, 512, 512, 512],
-    #     'VGG11': [64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
-    # 'VGG13': [64, 64, 'M', 128, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
-    # 'VGG16': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512, 'M', 512, 512, 512, 'M'],
-    # 'VGG19': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 256, 'M', 512, 512, 512, 512, 'M', 512, 512, 512, 512, 'M'],
 }
 
 
@@ -31,6 +29,7 @@ class VGG(nn.Module):
         super(VGG, self).__init__()
         self.features = self._make_layers(cfg[vgg_name])
         self.classifier = nn.Linear(512, 20)
+#         self.classifier = nn.Linear(256, 20)
 
     def forward(self, x):
         x = x.view(x.size(0), 1, 28, 28)
@@ -46,6 +45,7 @@ class VGG(nn.Module):
         for x in cfg:
             if x == 'M':
                 layers += [nn.MaxPool2d(kernel_size=2, stride=2)]
+                layers += [nn.Dropout(p=0.2)]
             else:
                 layers += [nn.Conv2d(in_channels, x, kernel_size=3, padding=1),
                            nn.BatchNorm2d(x),
@@ -285,3 +285,10 @@ fcc = 50
 model_file = "cnn_%d_%d_%d.model" % (out_channels, kernel_size, fcc)
 output_file = "cnn_out_%d_%d_%d.txt" % (out_channels, kernel_size, fcc)
 part_d(out_channels=out_channels, kernel_size=kernel_size, fcc=fcc, epochs=200, model_file=model_file, output_file=output_file)
+
+
+# competition
+model = VGG("VGG13_modified")
+model_file = "vgg13v2.model"
+pred = predict(model, model_file, test_data, batch_size=100)
+save_to_file(index_2_labels(pred, i2l), output_file)
