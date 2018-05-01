@@ -3,6 +3,7 @@ from sklearn.decomposition import PCA
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import scale
 from sklearn.svm import SVC
+import matplotlib.pyplot as plt
 import pickle
 
 
@@ -32,6 +33,18 @@ def train_and_predict(model, model_file, pred_file):
     pred = model.predict(smalld_test_data)
     print("\nSaving Predictions to file\n")
     save_to_file(pred, pred_file)
+
+
+def cv_plot():
+    cv_acc = [57.473, 67.398, 69.31, 69.192, 69.088, 69.092, 69.073, 69.08]
+    c = [1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1, 5, 10.0]
+    a, = plt.plot(c, cv_acc, 'co', linestyle='solid')
+    plt.xlabel("C")
+    plt.xscale('log')
+    plt.xticks(c, c)
+    plt.ylabel("Cross Validation Accuracy")
+    plt.title("Cross Validation to obtain C")
+    plt.legend([a], ["CV Accuracy"])
 
 
 if __name__ == '__main__':
@@ -68,3 +81,6 @@ if __name__ == '__main__':
     # RBF SVC
     # model = SVC(gamma=0.05, C=0.001, verbose=1)
     # train_and_predict(model, "models/b/rbf_g_0.05_c_0.01.model", "outputs/b/out_rbf_g_0.05_c_0.01.txt")
+
+    cv_plot()
+    plt.show()
