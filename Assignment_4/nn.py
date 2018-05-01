@@ -108,6 +108,7 @@ class CNN(nn.Module):
 
 def gen_index_for_labels(labels):
     labels = list(set(labels))
+    labels.sort()
     l2i = {}
     i2l = {}
     for label in labels:
