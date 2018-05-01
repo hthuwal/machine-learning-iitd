@@ -253,7 +253,7 @@ else:
 
         print("Model File: %s" % (model_file))
         print("Training...")
-        train(model, model_file, epochs=10, batch_size=100, dev=False)
+        train(model, model_file, epochs=10, batch_size=64, dev=False)
 
     elif what_to_do == "-p":
         if len(sys.argv) < 4:
