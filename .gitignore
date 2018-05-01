@@ -132,3 +132,8 @@ ENV/
 
 */dataset/*
 */models/*
+/Assignment_3/svm-predict
+
+/Assignment_3/svm-scale
+
+/Assignment_3/svm-train
