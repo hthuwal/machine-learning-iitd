@@ -6,6 +6,46 @@ import sys
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 
+all_Acc = [
+    35.171000,
+    35.967000,
+    35.560000,
+    33.009000,
+    35.205000,
+    36.626000,
+    35.782000,
+    35.471000,
+    36.812000,
+    33.572000,
+    34.358000,
+    34.870000,
+    36.442000,
+    35.561000,
+    35.066000,
+    34.786000,
+    35.450000,
+    35.353000,
+    35.039000,
+    34.226000,
+    31.910000,
+    35.546000,
+    33.037000,
+    34.439000,
+    34.004000,
+    35.814000,
+    35.197000,
+    35.692000,
+    35.622000
+]
+
+
+def all_plot():
+    a, = plt.plot([10 * i for i in range(1, len(all_Acc) + 1)], all_Acc, 'ro', linestyle='solid')
+    plt.xlabel("max_iter")
+    plt.ylabel("Training Accuracy")
+    plt.title("Variation in accuracy with change in max_iterations")
+    plt.legend([a], ["Training Accuracy"])
+
 
 def my_plot():
     x = [10, 20, 30, 40, 50]
@@ -151,4 +191,5 @@ if __name__ == '__main__':
     # # part3(retrain=True, max_iter=100)
     # main2("temp.model", retrain=True, max_iter=1)
     # my_plot()
-    # plt.show()
+    all_plot()
+    plt.show()
