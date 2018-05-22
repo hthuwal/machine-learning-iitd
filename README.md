@@ -23,3 +23,19 @@ Assignments for the Machine Learning course (COL774) at IITD
 **4. Gaussian Discriminant Analysis**
 
 ![](Assignment_1/Plots/gda.png)
+
+## Assignment 2
+
+**1. Naive Bayes**
+
+- Basic
+- +Stemming
+- +Stopwords Removal
+- +Feature Engineering
+
+**2. SVM**
+
+- MNIST Hand written digit recognition
+- Pegasos Algorithm: 92.49% Test accuracy
+- LibSVM Linear Kernel: 92.78
+- Gaussian Kernel: 97.23
