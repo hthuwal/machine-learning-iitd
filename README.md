@@ -118,3 +118,48 @@ Instead of calculating the median of the numerical data beforehand median at a p
 ## Assignment 4
 
 **1. K-Means**
+
+Test Acc: 36.685%
+
+![](Assignment_4/plots/a_all_acc.png)
+
+**2. PCA + SVM**
+
+Linear SVM: 69.842% Test Acc
+Rbf SVM: 81.795% Test Acc
+
+![](Assignment_4/plots/b_cv.png)
+
+**3. Neural Network**
+
+Single Hidden Layer with 1000 neurons: 77.952%
+
+**4. CNN**
+
+![](Assignment_4/plots/cnn_arch.png)
+
+Test Acc: 83.162%
+
+**5. Kaggle Competition**
+	[Link to competition](https://www.kaggle.com/c/col-774-spring-2018)
+
+- **Preprocessing**
+	
+	Normalize data to zero mean and unit vaiance
+
+- **Modified VGG13 Architecture**
+
+	![](Assignment_4/plots/vgg_hc13.jpg)
+
+	**Difference from original vgg13**
+
+	1. Dropout Layer after every Max Pool Layer
+	2. No Max Pool Layer in Last Conv2D block
+
+- **Hyperparameters**
+
+	- number_of_epochs: 10
+	- batch_size: 64
+	- Adam optimizer
+
+
