@@ -126,6 +126,7 @@ Test Acc: 36.685%
 **2. PCA + SVM**
 
 Linear SVM: 69.842% Test Acc
+
 Rbf SVM: 81.795% Test Acc
 
 ![](Assignment_4/plots/b_cv.png)
